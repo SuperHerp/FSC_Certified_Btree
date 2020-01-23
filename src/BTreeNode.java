@@ -261,14 +261,17 @@ public class BTreeNode extends AbstractBTreeNode{
 
         /**
          * start:
-         * add curNode values;
          *
-         * enter first unchecked child;
+         * if curnode is unechecked =>add curNode values;
+         * else if curnode is checked => doNothing(dont add curnode values)
+         *
+         * if child exists => enter first unchecked child
          * goto start;
          *
-         * got leaf?
-         * add child to child Stack
-         * go to parent of curNode
+         * else if cur is leaf(got leaf?)? || cur children all checked => 
+         *      check leaf
+         *
+         *      go to parent of curNode
          * goto start
          */
 
