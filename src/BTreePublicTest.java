@@ -189,7 +189,7 @@ public class BTreePublicTest {
 			}
 			Integer key = btn.getKeys().get(i);
 			assertTrue("BTreeNode contains unexpected value.", keysExp.contains(key));
-			assertFalse("BTreeNode contains duplicate value.", keysAct.contains(key));
+			assertFalse("BTreeNode contains duplicate value: " + key, keysAct.contains(key));
 			if (keysAct.size() > 0) {
 				assertTrue("BTree must keep its keys sorted in ascending order if read by in-order traversal.", keysAct.get(keysAct.size() - 1) < key);
 			}
