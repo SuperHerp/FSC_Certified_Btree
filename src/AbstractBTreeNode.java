@@ -156,23 +156,23 @@ public abstract class AbstractBTreeNode {
 	 * </div>
 	 * <p>is <b>recursively</b> encoded to the following JSON string:</p>
 	 * <div style="background-color:white;">
-	 * <samp>{</samp><br/>
-	 * <samp><span style="color:white">____</span>{@link #keys}: [9, 22],</samp><br/>
-	 * <samp><span style="color:white">____</span>{@link #children}:</samp><br/>
-	 * <samp><span style="color:white">____</span>[</samp><br/>
-	 * <samp><span style="color:white">________</span>{</samp><br/>
-	 * <samp><span style="color:white">____________</span>{@link #keys}: [2, 8]</samp><br/>
-	 * <samp><span style="color:white">________</span>},</samp><br/>
-	 * <samp><span style="color:white">________</span>{</samp><br/>
-	 * <samp><span style="color:white">____________</span>{@link #keys}: [17, 21]</samp><br/>
-	 * <samp><span style="color:white">________</span>},</samp><br/>
-	 * <samp><span style="color:white">________</span>{</samp><br/>
-	 * <samp><span style="color:white">____________</span>{@link #keys}: [23, 24, 25]</samp><br/>
-	 * <samp><span style="color:white">________</span>}</samp><br/>
-	 * <samp><span style="color:white">____</span>]</samp><br/>
-	 * <samp>}</samp><br/>
+	 * <samp>{
+	 * <samp><span style="color:white">____[9, 22],
+	 * <samp><span style="color:white">____
+	 * <samp><span style="color:white">____[
+	 * <samp><span style="color:white">________{
+	 * <samp><span style="color:white">____________[2, 8]
+	 * <samp><span style="color:white">________},
+	 * <samp><span style="color:white">________{
+	 * <samp><span style="color:white">____________[17, 21]
+	 * <samp><span style="color:white">________},
+	 * <samp><span style="color:white">________{
+	 * <samp><span style="color:white">____________[23, 24, 25]
+	 * <samp><span style="color:white">________}
+	 * <samp><span style="color:white">____]
+	 * <samp>}
 	 * </div>
-	 *
+	 *  [9,22],[{[2,8]},{[17,21]},{[23,24,25]}]
 	 * @return a string representation of this BTree in the JSON format
 	 * @see <a href="https://de.wikipedia.org/wiki/JavaScript_Object_Notation">JavaScript Object Notation (JSON)</a>
 	 */

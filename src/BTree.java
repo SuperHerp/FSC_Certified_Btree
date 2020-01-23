@@ -148,6 +148,8 @@ public class BTree extends AbstractBTree {
 
         bTree0.hasKey(23);
 
+        bTree0.toJson();
+
         int wcount = 0;
         while(bTree0.hasKey(15) && wcount < 1001){
             rnd = rand.nextInt(500);

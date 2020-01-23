@@ -2,6 +2,7 @@ import javax.swing.plaf.IconUIResource;
 import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Stack;
 
 public class BTreeNode extends AbstractBTreeNode{
     public BTreeNode(int degree) {
@@ -254,9 +255,133 @@ public class BTreeNode extends AbstractBTreeNode{
         }
     }
 
+    // { [9,22],[{[2,8]},{[17,21]},{[23,24,25]}] }
     @Override
     public String toJson() {
-        return null;
+
+        /**
+         * start:
+         * add curNode values;
+         *
+         * enter first unchecked child;
+         * goto start;
+         *
+         * got leaf?
+         * add child to child Stack
+         * go to parent of curNode
+         * goto start
+         */
+
+        StringBuilder json = new StringBuilder();
+        AbstractBTreeNode curNode = this;
+        Stack<AbstractBTreeNode> parents = new Stack<>();
+        Stack<AbstractBTreeNode> lastChild = new Stack<>();
+
+        while(true){
+            json.append("{[");
+            for(int i = 0; i < curNode.getKeys().size(); i++){
+                if(parents.size() == 0 || parents.peek() != curNode){
+                    json.append(curNode.getKeys().get(i));
+                    if(i == curNode.getKeys().size()-1) {
+                        json.append("]");
+                    }else{
+                        json.append(",");
+                    }
+                }
+            }
+            if(curNode.getChildren().size() > 0){
+                json.append(",[");
+                boolean curChanged = false;
+                for (int i = 0; i < curNode.getChildren().size(); i++){
+                    if(lastChild.size() != 0 && curNode.getChildren().get(i) != lastChild.peek()){
+                        continue;
+                    }else{
+                        curChanged = true;
+                        parents.push(curNode);
+                        curNode = curNode.getChildren().get(i);
+                        break;
+                    }
+                }
+                if(curChanged){
+                    continue;
+                }
+            }else if(curNode.getChildren().size() == 0){
+                if(parents.size() != 0){
+                    json.append("}");
+                    lastChild.push(curNode);
+                    curNode = parents.peek();
+                }
+            }
+        }//while(true)---end
+
+
+
+
+
+
+
+
+/*
+        StringBuffer jSon = new StringBuffer();
+        if(this == null ){
+
+        }else {
+            AbstractBTreeNode curNode = this;
+            Stack<AbstractBTreeNode> lastChild = new Stack<>();
+            Stack<AbstractBTreeNode> parentStack = new Stack<>();
+            while(true) {
+                //parentStack.push(curNode);
+                String out1 = jSon.toString();
+                System.out.println(out1);
+                jSon.append("{");
+                jSon.append("[");
+                for (int i = 0; i < curNode.getKeys().size(); i++) {
+                    int insert = curNode.getKeys().get(i);
+                    jSon.append(insert);
+                    if (i != curNode.getKeys().size() - 1) {
+                        jSon.append(",");
+                    }
+                }
+                jSon.append("]");
+
+                boolean curNodeChanged = false;
+                if(curNode.getChildren().size() > 0){
+                    jSon.append(",[");
+                    for (int i = 0; i < curNode.getChildren().size(); i++){
+                        if(i < curNode.getChildren().size()){
+                            if(lastChild.size() == 0 || curNode.getChildren().get(i) != lastChild.peek()){
+                                parentStack.push(curNode);
+                                curNode = curNode.getChildren().get(i);
+                                curNodeChanged = true;
+                                break;
+                            }else{
+                                continue;
+                            }
+                        }
+                    }
+                    if(curNodeChanged){
+                        continue;
+                    }else{
+                        parentStack.pop();
+                        if(parentStack.size()== 0){
+                            break;
+                        }
+                        curNode = parentStack.peek();
+                    }
+                }else{
+                    //parentStack.pop();
+                    if(parentStack.size()== 0){
+                        break;
+                    }
+                    lastChild.push(curNode);
+                    curNode = parentStack.peek();
+                    parentStack.pop();
+
+                }
+            }
+        }
+        return jSon.toString();
+ */
     }
 
     public static void main(String[] args) {
@@ -274,12 +399,14 @@ public class BTreeNode extends AbstractBTreeNode{
         child3.addKey(16);
         child3.addKey(20);
 
+        test.getChildren();
 
         test.addChild(child3);
         test.addChild(child1);
         test.addChild(child2);
 
         sortAL(test.getChildren());
+
         int debug = -1;
     }
 }
