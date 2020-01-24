@@ -313,6 +313,7 @@ public class BTreeNode extends AbstractBTreeNode{
                 if(parents.size() != 0){
                     parents.pop();
                     curNode = parents.peek();
+                    //json.append(",");
                 }else{
                     System.out.println("idk...");
                 }
@@ -322,8 +323,16 @@ public class BTreeNode extends AbstractBTreeNode{
                     if (lastChild.contains(curNode.getChildren().get(i))) { //i-child has already been visited => skip kid
                         continue;
                     } else { //i-child has not been visited yet => index = i and break;
-                        index = i;
-                        break;
+                        if(i > 0 && i < curNode.getChildren().size()) {
+                            json.append(",");
+                            index = i;
+                            break;
+                        }else{
+                            json.append(",[");
+                            index = i;
+                            break;
+                        }
+
                     }
                 }
                 //index could be -1 => all children of curnode were visited => go to parent of curnode
