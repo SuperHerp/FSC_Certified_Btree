@@ -293,6 +293,9 @@ public class BTreeNode extends AbstractBTreeNode{
 
         while(true){
 
+            if(parents.size() == 0 && lastChild.containsAll(curNode.getChildren())){
+                break;
+            }
             if(!parents.contains(curNode)){ //curNode unchecked? => add key to json
                 json.append("{[");
                 parents.push(curNode);
@@ -343,6 +346,9 @@ public class BTreeNode extends AbstractBTreeNode{
                     lastChild.push(curNode);
                     if (parents.size() != 0) {
                         parents.pop();
+                        if(parents.size() == 0){
+                            break;
+                        }
                         curNode = parents.peek();
                     }
                     continue;
@@ -357,7 +363,7 @@ public class BTreeNode extends AbstractBTreeNode{
         }
 
 
-        //return json.toString();
+        return json.toString();
     }
 
     public static void main(String[] args) {

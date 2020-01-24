@@ -135,6 +135,7 @@ public class BTree extends AbstractBTree {
         bTree0.insert(24);
 
         bTree0.insert(25);
+        /*
         bTree0.insert(30);
         bTree0.insert(27);
         bTree0.insert(10);
@@ -151,9 +152,11 @@ public class BTree extends AbstractBTree {
         AbstractBTreeNode btreeNode = bTree0.getRoot();
 
         //BTreeNode.traverse(btreeNode);
+        */
 
-        bTree0.toJson();
-
+        String test = bTree0.toJson();
+        System.out.println(test);
+/*
         int wcount = 0;
         while(bTree0.hasKey(15) && wcount < 1001){
             rnd = rand.nextInt(500);
@@ -165,5 +168,6 @@ public class BTree extends AbstractBTree {
 
         System.out.println("wcount: " + wcount);
         int debug = -1;
+    */
     }
 }
