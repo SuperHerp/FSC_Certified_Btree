@@ -148,6 +148,10 @@ public class BTree extends AbstractBTree {
 
         bTree0.hasKey(23);
 
+        AbstractBTreeNode btreeNode = bTree0.getRoot();
+
+        BTreeNode.traverse(btreeNode);
+
         bTree0.toJson();
 
         int wcount = 0;
