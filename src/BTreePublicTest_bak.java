@@ -3,12 +3,13 @@ import java.lang.reflect.*;
 import java.util.*;
 import org.junit.*;
 
-public class BTreePublicTest {
+import javax.sound.midi.Soundbank;
+
+public class BTreePublicTest_bak {
 	// ========== SYSTEM ==========
 	protected static final String EX_NAME_hasKey = "hasKey";
 	protected static final String EX_NAME_insert = "insert";
 	protected static final String EX_NAME_toJson = "toJson";
-	//public static StringBuilder stealer = new StringBuilder("{");
 	// --------------------
 
 	// ========== TEST DATA ==========
@@ -18,21 +19,21 @@ public class BTreePublicTest {
 	// -------------------- Intestines --------------------
 	@Test(timeout = 666)
 	public void pubTest__BTree_insertion__Intestines__THIS_TEST_IS_VERY_IMPORTANT__IF_IT_FAILS_THEN_YOU_WILL_GET_NO_POINTS_AT_ALL() {
-		check__Intestines();
+		//check__Intestines();
 	}
 
 	@Test(timeout = 666)
 	public void pubTest__BTree_search__Intestines__THIS_TEST_IS_VERY_IMPORTANT__IF_IT_FAILS_THEN_YOU_WILL_GET_NO_POINTS_AT_ALL() {
-		check__Intestines();
+		//check__Intestines();
 	}
 
 	@Test(timeout = 666)
 	public void pubTest__BTreeNode_toJson__Intestines__THIS_TEST_IS_VERY_IMPORTANT__IF_IT_FAILS_THEN_YOU_WILL_GET_NO_POINTS_AT_ALL() {
-		check__Intestines();
+		//check__Intestines();
 	}
 
 	// -------------------- hasKey --------------------
-	@Test(timeout = 16666)
+	@Test(timeout = 999999)
 	public void pubTest__hasKey__random() {
 		for (int pass = 0; pass < 5; pass++) {
 			ArrayList<Integer> keysExp = new ArrayList<>();
@@ -64,17 +65,21 @@ public class BTreePublicTest {
 		}
 	}
 
-	@Test(timeout = 666)
-	public void pubTest__insertWithSplit__random() {
+	@Test(timeout = 999999)
+	public void pubTest__insertWithSplit__random(){
 		for (int pass = 0; pass <= 10; pass++) {
+			System.out.println("start pass: " + pass);
 			{ // leaf
 				int degreeExp = 3 + RND.nextInt(3), key = -666;
 				ArrayList<Integer> keysExp = new ArrayList<>();
+				AbstractBTree bt = new BTree(degreeExp);//custom
 				AbstractBTreeNode btn = new BTreeNode(degreeExp);
+				bt.setRoot(btn);//custom
 				for (int kIdx = 0; kIdx < 2 * degreeExp; kIdx++) {
 					key += 2 + RND.nextInt(42);
 					keysExp.add(key);
-					OverflowNode o = btn.insert(key);
+					OverflowNode o = btn.insert(key);//custom
+					//OverflowNode o = btn.insert(key);
 					assertNull("No splitting yet.", o);
 				}
 				key = keysExp.get(RND.nextInt(keysExp.size())) + (RND.nextBoolean() ? -1 : +1);
@@ -87,37 +92,56 @@ public class BTreePublicTest {
 				assertEquals("OverflowNode has wrong upper keys.", keysExp.subList(degreeExp + 1, keysExp.size()), o.getRightChild().getKeys());
 			}
 			{ // non-leaf
-				int degreeExp = 3 + RND.nextInt(3), key = -666;
+				System.out.println("enter non leaf split");
+				int degreeExp = 3 /*+ RND.nextInt(3)*/, key = -666;
 				ArrayList<Integer> keysExpRoot = new ArrayList<>();
 				ArrayList<ArrayList<Integer>> keysExps = new ArrayList<>();
+				AbstractBTree bTree = new BTree(degreeExp);//custom
+				AbstractBTree bTree2 = new BTree(degreeExp); //custom
 				AbstractBTreeNode btnRoot = new BTreeNode(degreeExp);
+				AbstractBTreeNode btnRootCustom = new BTreeNode(degreeExp);
+				bTree.setRoot(btnRoot);//custom
+				bTree2.setRoot(btnRootCustom);
 				AbstractBTreeNode[] btn = new AbstractBTreeNode[2 * degreeExp + 1];
+				AbstractBTreeNode[] btnCustom = new AbstractBTreeNode[2 * degreeExp + 1];
 				keysExps.add(new ArrayList<Integer>());
 				for (int nIdx = 0; nIdx < btn.length; nIdx++) {
 					keysExps.add(new ArrayList<Integer>());
 					btn[nIdx] = new BTreeNode(degreeExp);
+					btnCustom[nIdx] = new BTreeNode(degreeExp);
 					btnRoot.addChild(btn[nIdx]);
+					btnRootCustom.addChild(btnCustom[nIdx]);
 					for (int kIdx = 0; kIdx < 2 * degreeExp; kIdx++) {
 						key += 2 + RND.nextInt(42);
 						keysExps.get(nIdx).add(key);
 						btn[nIdx].addKey(key);
+						btnCustom[nIdx].addKey(key);
 					}
 					if (nIdx < btn.length - 1) {
 						key += 2 + RND.nextInt(42);
 						keysExpRoot.add(key);
 						btnRoot.addKey(key);
+						btnRootCustom.addKey(key);
 					}
 				}
+				System.out.println("CP 1");
 				int subTreeIdx = RND.nextInt(btn.length);
 				key = keysExps.get(subTreeIdx).get(RND.nextInt(2 * degreeExp)) + (RND.nextBoolean() ? -1 : +1);
 				keysExps.get(subTreeIdx).add(key);
 				Collections.sort(keysExps.get(subTreeIdx));
-				OverflowNode o = btnRoot.insert(key);
+				//OverflowNode o = btnRoot.insert(key); custom
+				System.out.println("BTreeClass insert");
+				bTree.insert(key);
+				System.out.println("BTreeNodeClass insert");
+				OverflowNode o = btnRootCustom.insert(key);
 				key = keysExps.get(subTreeIdx).get(degreeExp);
 				keysExpRoot.add(key);
 				Collections.sort(keysExpRoot);
 				assertNotNull("Now we expect splitting!", o);
+				System.out.println("CP 2");
+				int forCP = 0;
 				for (int nIdx = 0; nIdx < btn.length; nIdx++) {
+					System.out.println("enter forCP " + forCP);
 					if (nIdx != subTreeIdx) {
 						assertEquals("Old untouched sub-node has wrong keys.", keysExps.get(nIdx), btn[nIdx].getKeys());
 					} else {
@@ -126,16 +150,27 @@ public class BTreePublicTest {
 							assertEquals("New sub-node (right split) has wrong keys.", keysExps.get(subTreeIdx).subList(degreeExp + 1, keysExps.get(subTreeIdx).size()), btnRoot.getChildren().get(subTreeIdx + 1).getKeys());
 						}
 					}
+					System.out.println("halfway there...");
 					if (nIdx <= subTreeIdx && nIdx <= degreeExp) {
 						assertSame("Old root node has wrong children.", btn[nIdx], btnRoot.getChildren().get(nIdx));
 					} else if (nIdx > subTreeIdx && nIdx > degreeExp) {
 						assertSame("OverflowNode from root has wrong children.", btn[nIdx], o.getRightChild().getChildren().get(nIdx - degreeExp));
 					}
+					System.out.println("leaving forCP " + forCP);
+					forCP++;
 				}
+				System.out.println("Survived for....");
 				assertEquals("Old root node has wrong keys.", keysExpRoot.subList(0, degreeExp), btnRoot.getKeys());
 				assertEquals("OverflowNode from root has wrong middle key.", keysExpRoot.get(degreeExp), o.getKey());
 				assertEquals("OverflowNode from root has wrong upper keys.", keysExpRoot.subList(degreeExp + 1, keysExpRoot.size()), o.getRightChild().getKeys());
+
+				System.out.println("________________________________________________________________________________________");
+				String btreeClazz = bTree.toJson();
+				String btreenodeClazz = bTree2.toJson();
+				assertEquals("unequal", btreeClazz, btreenodeClazz);
+				System.out.println("________________________________________________________________________________________");
 			}
+			System.out.println("end pass: " + pass);
 		}
 	}
 
@@ -182,7 +217,7 @@ public class BTreePublicTest {
 			}
 			Integer key = btn.getKeys().get(i);
 			assertTrue("BTreeNode contains unexpected value.", keysExp.contains(key));
-			assertFalse("BTreeNode contains duplicate value.", keysAct.contains(key));
+			assertFalse("BTreeNode contains duplicate value: " + key, keysAct.contains(key));
 			if (keysAct.size() > 0) {
 				assertTrue("BTree must keep its keys sorted in ascending order if read by in-order traversal.", keysAct.get(keysAct.size() - 1) < key);
 			}
@@ -195,22 +230,22 @@ public class BTreePublicTest {
 
 	protected static AbstractBTree generateRandomBTree(int degree, int depth, int firstKey, ArrayList<Integer> ks, StringBuilder sb) {
 		AbstractBTree bt = new BTree(degree);
-		StringBuilder stealy = new StringBuilder("{");
-		bt.setRoot(generateRandomBTreeNode(degree, true, depth, firstKey, ks, sb, stealy));
+		bt.setRoot(generateRandomBTreeNode(degree, true, depth, firstKey, ks, sb));
+
+		System.out.println("------------------------------------------------------------------------------------------");
+		System.out.println(bt.toJson());
+		System.out.println("------------------------------------------------------------------------------------------");
+
 		return bt;
 	}
 
-	private static AbstractBTreeNode generateRandomBTreeNode(int degree, boolean isRoot, int depth, int firstKey, ArrayList<Integer> ks, StringBuilder sb, StringBuilder stealer) {
-		StringBuilder stealyMcStealson = new StringBuilder();
-
+	private static AbstractBTreeNode generateRandomBTreeNode(int degree, boolean isRoot, int depth, int firstKey, ArrayList<Integer> ks, StringBuilder sb) {
 		AbstractBTreeNode n = new BTreeNode(degree);
 		int numOfKeys = (isRoot ? 1 + RND.nextInt(degree) : degree) + RND.nextInt(degree + 1);
 		StringBuilder sbKeys = new StringBuilder(), sbChildren = new StringBuilder();
 		if (depth > 0) {
-			n.addChild(generateRandomBTreeNode(degree, false, depth - 1, firstKey, ks, sbChildren, stealer));
+			n.addChild(generateRandomBTreeNode(degree, false, depth - 1, firstKey, ks, sbChildren));
 		}
-		System.out.println("----stealyMcStealson--------------------------------------------------------------------------------");
-		stealyMcStealson.append("{");
 		for (int kIdx = 0; kIdx < numOfKeys; kIdx++) {
 			int key = (ks.isEmpty() ? firstKey : ks.get(ks.size() - 1)) + 1 + RND.nextInt(5);
 			ks.add(key);
@@ -218,11 +253,10 @@ public class BTreePublicTest {
 				sbKeys.append(",");
 			}
 			sbKeys.append(key);
-			stealer.append(key + ",");
 			n.addKey(key);
 			if (depth > 0) {
 				sbChildren.append(",");
-				n.addChild(generateRandomBTreeNode(degree, false, depth - 1, firstKey, ks, sbChildren, stealer));
+				n.addChild(generateRandomBTreeNode(degree, false, depth - 1, firstKey, ks, sbChildren));
 			}
 		}
 		sb.append("{").append("keys:[").append(sbKeys.toString()).append("]");
@@ -230,14 +264,6 @@ public class BTreePublicTest {
 			sb.append(",children:[").append(sbChildren).append("]");
 		}
 		sb.append("}");
-
-		//stealer.append("}");
-		System.out.println(stealyMcStealson);
-		System.out.println("----stealyMcStealson--------------------------------------------------------------------------------");
-		System.out.println("----StealerDealer--------------------------------------------------------------------------------");
-		System.out.println("random Tree with degree: "+n.getDegree() +"\n" + n.toJson() + "\nwas built with these keys:\n " + stealer);
-		System.out.println("----StealerDealer--------------------------------------------------------------------------------");
-
 		return n;
 	}
 

@@ -10,7 +10,6 @@ public class BTreeNode extends AbstractBTreeNode{
     @Override
     public boolean hasKey(int key) {
         AbstractBTreeNode curNode = this;
-
         while(true) {
             if(curNode.getKeys().contains(key)) {
                 return true;
@@ -30,76 +29,6 @@ public class BTreeNode extends AbstractBTreeNode{
                 }
             }
         }
-
-
-        /**
-        while(true){
-            int keyListSize = curNode.getKeys().size();
-            Boolean isBigger = false;
-            int i;
-            for(i = 0; i < keyListSize; i++){
-                System.out.println("i: " + i);
-                if(key < curNode.getKeys().get(i)){
-                    //index = i;
-                }else if(key > curNode.getKeys().get(i)){
-                    isBigger = true;
-                    break;
-                }else if(key == curNode.getKeys().get(i)){
-                    return true;
-                }
-            }
-
-            int debug02 = 5;
-
-            if(isBigger){
-                if(curNode.getChildren().size() > i+1){
-                    curNode = curNode.getChildren().get(i+1);
-                }else{
-                    break;
-                }
-            }else{
-                if(curNode.getChildren().size() > i){
-                    curNode = curNode.getChildren().get(i);
-                }else{
-                    break;
-                }
-            }
-         */
-            /*
-            if(curNode.getChildren().size() > index){
-                curNode = curNode.getChildren().get(index);
-                continue;
-            }else{
-                return false;
-            }
-            */
-
-
-        //return false;
-/**
-        while(true){
-            int i;
-            for(i = 0; i < curNode.getKeys().size(); i++) {
-                if (curNode.getKeys().get(i) >= key) {
-                    if (curNode.getKeys().get(i) == key) {
-                        return true;
-                    }else{
-                        break;
-                    }
-                }else{
-                    //break;
-                }
-            }
-            try {
-                curNode = curNode.getChildren().get(i);
-            }catch (Throwable t){
-                return false;
-            }
-        }
-
- */
-
-        //return false;
     }
 
     public static ArrayList<AbstractBTreeNode> find_Leaf_and_Parents(AbstractBTreeNode cur, int key) {
@@ -119,14 +48,6 @@ public class BTreeNode extends AbstractBTreeNode{
                 curNode = curNode.getChildren().get(i);
                 continue;
             }
-            /*
-            try {
-                parents.add(curNode);
-                curNode = curNode.getChildren().get(i);
-            }catch (Throwable exceptionIOOB){
-                return parents;
-            }
-            */
         }
     }
 
@@ -198,11 +119,58 @@ public class BTreeNode extends AbstractBTreeNode{
                 keys.sort(cmp);
                 if (keys.size() > 2*curNode.getDegree()) {
                     OverflowNode ovfl = curNode.split();
+                    OverflowNode ovfl_bak = ovfl;
+//--------------------------------------------------------------------------------------------
+                    /*
+                    Stack<AbstractBTreeNode> parentStack = new Stack<>();
+                    while(true) {
+                        if(ovfl == null){
+                            return null;
+                        }else{
+                            if(parentStack.size() != 0) {
+                                parentStack.pop();
+                            }
+                            if(parentStack.size() < 1){
+                                if(parentStack.size() == 0) {
+                                    AbstractBTreeNode newRoot = new BTreeNode(curNode.getDegree());
+                                    newRoot.addKey(ovfl.getKey());
+                                    newRoot.addChild(curNode);
+                                    newRoot.addChild(ovfl.getRightChild());
+                                    //this.setRoot(newRoot);
+                                    return ovfl;
+                                }
+                            }else {
+                                curNode = parentStack.peek();
+                                ArrayList<Integer> keys2 = curNode.getKeys();
+                                ArrayList<AbstractBTreeNode> children = curNode.getChildren();
+
+                                key = ovfl.getKey();
+
+                                keys2.add(key);
+                                keys2.sort(cmp);
+
+                                children.add(ovfl.getRightChild());
+                                BTreeNode.sortAL(children);
+
+                                if (keys2.size() >= 2 * curNode.getDegree()) {
+                                    ovfl = curNode.split();
+                                    continue;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    */
+//--------------------------------------------------------------------------------------------
+
+
                     if (ovfl != null) {
                         return ovfl;
                     }else{
                         System.out.println("Illegal state exception!");
                     }
+
                 }else{
                     break;
                 }
@@ -233,16 +201,6 @@ public class BTreeNode extends AbstractBTreeNode{
                     curNode.getChildren().remove(j);
                     continue;
                 }
-                /*
-                try{
-                    rch.addChild(curNode.getChildren().get(j));
-                    curNode.getChildren().remove(j);
-                }catch (Throwable t){
-                    System.out.println("split cought:");
-                    t.printStackTrace();
-                    continue;
-                }
-                */
             }
 
             OverflowNode ovfNode = new OverflowNode(curNode.getKeys().get(curNode.getDegree()), rch);
@@ -253,13 +211,6 @@ public class BTreeNode extends AbstractBTreeNode{
         }
     }
 
-    public boolean isLastParent(){
-        if(this.getChildren().get(0).getChildren().size() == 0){
-            return true;
-        }else{
-            return false;
-        }
-    }
 
     // { [9,22],[{[2,8]},{[17,21]},{[23,24,25]}] }
     @Override
@@ -337,7 +288,7 @@ public class BTreeNode extends AbstractBTreeNode{
                 if (index == -1) {
                     //if()
                     //reached end of curNode => json.append("]")
-                    json.append("]");
+                    json.append("]}");
                     lastChild.push(curNode);
                     if (parents.size() != 0) {
                         parents.pop();
@@ -356,8 +307,6 @@ public class BTreeNode extends AbstractBTreeNode{
             }
 
         }
-
-
         return json.toString();
     }
 
