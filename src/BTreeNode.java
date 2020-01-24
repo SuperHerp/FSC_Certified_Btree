@@ -297,7 +297,7 @@ public class BTreeNode extends AbstractBTreeNode{
                 break;
             }
             if(!parents.contains(curNode)){ //curNode unchecked? => add key to json
-                json.append("{[");
+                json.append("{keys:[");
                 parents.push(curNode);
                 for(int i = 0; i < curNode.getKeys().size(); i++){
                     if(i < curNode.getKeys().size()-1){ //last key?  no => append  i-key + ","
@@ -331,7 +331,7 @@ public class BTreeNode extends AbstractBTreeNode{
                             index = i;
                             break;
                         }else{
-                            json.append(",[");
+                            json.append(",children:[");
                             index = i;
                             break;
                         }
