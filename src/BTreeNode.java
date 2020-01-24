@@ -313,7 +313,7 @@ public class BTreeNode extends AbstractBTreeNode{
                 if(parents.size() != 0){
                     parents.pop();
                     curNode = parents.peek();
-                    //json.append(",");
+                    json.append("}");
                 }else{
                     System.out.println("idk...");
                 }
