@@ -266,152 +266,6 @@ public class BTreeNode extends AbstractBTreeNode{
         }
     }
 
-    protected static void traverse(AbstractBTreeNode start){
-        /**
-         * start:
-         *
-         * if curnode is unechecked =>add curNode values;
-         * else if curnode is checked => doNothing(dont add curnode values)
-         *
-         * if child exists => enter first unchecked child
-         * goto start;
-         *
-         * else if cur is leaf(got leaf?)? || cur children all checked =>
-         *      check leaf
-         *
-         *      go to parent of curNode
-         * goto start
-         */
-
-        Stack<AbstractBTreeNode> visitedParents = new Stack<>();
-        ArrayList<AbstractBTreeNode> lastChild = new ArrayList<>();
-        AbstractBTreeNode curNode = start;
-        StringBuilder json = new StringBuilder();
-
-        while(true){
-            if(!visitedParents.contains(curNode)){
-                visitedParents.push(curNode);
-                json.append("{[");
-                for(int i = 0; i < curNode.getKeys().size(); i++){
-                    if(i == curNode.getKeys().size()-1){
-                        json.append(curNode.getKeys().get(i) + "]");
-                    }else{
-                        json.append(curNode.getKeys().get(i) + ",");
-                    }
-                }
-            }
-            int index = -1;
-            if(curNode.getChildren().size() != 0){
-                json.append(",[");
-                for(int i = 0; i < curNode.getChildren().size(); i++){
-                    if(lastChild.contains(curNode.getChildren().get(i))){
-                        continue;
-                    }else{
-                        index = i;
-                        break;
-                    }
-                }
-                if(index != -1) {
-                    json.append(",");
-                    curNode = curNode.getChildren().get(index);
-                }else{
-                    json.append(",[");
-                }
-
-            }else{
-                lastChild.add(curNode);
-                if(visitedParents.size() != 0){
-                    visitedParents.pop();
-                    if(lastChild.containsAll(visitedParents.peek().getChildren())){
-                        json.append("}]");
-
-                    }else{
-                        json.append("},");
-                        curNode = visitedParents.peek();
-                    }
-                }
-            }
-        }
-
-
-
-
-/*
-
-
-        while(true){
-            System.out.println(json);
-            //json.append("{");
-            if(!visitedParents.contains(curNode)){
-                visitedParents.push(curNode);
-                json.append("{[");
-                for(int i = 0; i < curNode.getKeys().size(); i++){
-                    if(i != curNode.getKeys().size()-1){
-                        json.append(curNode.getKeys().get(i) + ",");
-                    }else{
-                        json.append(curNode.getKeys().get(i) + "]");
-                    }
-                }
-            }
-            int nextChildInd = -1;
-            for(int i = 0; i < curNode.getChildren().size(); i++){
-                if(lastChild.contains(curNode.getChildren().get(i))){
-                    continue;
-                }else{
-                    nextChildInd = i;
-                    break;
-                }
-            }
-
-            if(nextChildInd == -1){
-                json.append("}");
-                lastChild.add(curNode);
-                if(visitedParents.size() != 0) {
-                    visitedParents.pop();
-                    if(lastChild.containsAll(visitedParents.peek().getChildren())){
-                        json.append("]");
-                    }else{
-                        json.append(",");
-                    }
-                }
-                curNode = visitedParents.peek();
-                continue;
-            }else{
-                if(curNode.getChildren().get(nextChildInd).getChildren().size() == 0){
-                    if(nextChildInd < curNode.getChildren().size()-1){
-                        json.append(",");
-                    }else{
-                        json.append("]");
-                    }
-                }
-
-                json.append("[");
-                curNode = curNode.getChildren().get(nextChildInd);
-/*
-                if(curNode.getChildren().size() == 0){
-                    json.append(",");
-                }else{
-                    json.append(",[");
-                }
-*/
-                //continue;
-            //}
-/*
-            if(curNode.getChildren().size() != 0){
-                json.append(",[");
-                curNode = curNode.getChildren().get(0);
-            }else{
-                json.append("}");
-                lastChild.add(curNode);
-                curNode = visitedParents.peek();
-            }
-
- */
-        }
-
-    //}
-
-
     // { [9,22],[{[2,8]},{[17,21]},{[23,24,25]}] }
     @Override
     public String toJson() {
@@ -438,113 +292,63 @@ public class BTreeNode extends AbstractBTreeNode{
         Stack<AbstractBTreeNode> lastChild = new Stack<>();
 
         while(true){
-            json.append("{[");
-            for(int i = 0; i < curNode.getKeys().size(); i++){
-                if((parents.size() == 0 || parents.peek() != curNode) &&  (lastChild.size() == 0 || lastChild.peek() != curNode)){
-                    json.append(curNode.getKeys().get(i));
-                    if(i == curNode.getKeys().size()-1) {
-                        json.append("]");
-                    }else{
-                        json.append(",");
+
+            if(!parents.contains(curNode)){ //curNode unchecked? => add key to json
+                json.append("{[");
+                parents.push(curNode);
+                for(int i = 0; i < curNode.getKeys().size(); i++){
+                    if(i < curNode.getKeys().size()-1){ //last key?  no => append  i-key + ","
+                        json.append(curNode.getKeys().get(i) + ",");
+                    }else { //last key? yes => append i-key + "]"
+                        json.append(curNode.getKeys().get(i) + "]");
                     }
-                }else{
-                    json.append(",");
-                    break;
                 }
+            }else{ //curnode is checked? => skip adding values
+                //nop
             }
-            if(curNode.getChildren().size() > 0){
-                json.append(",[");
-                boolean curChanged = false;
-                for (int i = 0; i < curNode.getChildren().size(); i++){
-                    if(lastChild.size() != 0 && curNode.getChildren().get(i) != lastChild.peek()){
+            //all keys of curNode were added => looking for unchecked child
+
+            if(curNode.getChildren().size() == 0){
+                lastChild.push(curNode);
+                if(parents.size() != 0){
+                    parents.pop();
+                    curNode = parents.peek();
+                }else{
+                    System.out.println("idk...");
+                }
+            }else {
+                int index = -1;
+                for (int i = 0; i < curNode.getChildren().size(); i++) {
+                    if (lastChild.contains(curNode.getChildren().get(i))) { //i-child has already been visited => skip kid
                         continue;
-                    }else{
-                        curChanged = true;
-                        parents.push(curNode);
-                        curNode = curNode.getChildren().get(i);
+                    } else { //i-child has not been visited yet => index = i and break;
+                        index = i;
                         break;
                     }
                 }
-                if(curChanged){
+                //index could be -1 => all children of curnode were visited => go to parent of curnode
+                if (index == -1) {
+                    //if()
+                    //reached end of curNode => json.append("]")
+                    json.append("]");
+                    lastChild.push(curNode);
+                    if (parents.size() != 0) {
+                        parents.pop();
+                        curNode = parents.peek();
+                    }
                     continue;
                 }
-            }else if(curNode.getChildren().size() == 0){
-                if(parents.size() != 0){
-                    json.append("},");
-                    lastChild.push(curNode);
-                    curNode = parents.peek();
+                // if index != -1 add curNode to parents and set curnode to i-child of curnode and start from beginning
+                if (index > -1) {
+                    //parents.push(curNode);
+                    curNode = curNode.getChildren().get(index);
                 }
             }
-        }//while(true)---end
 
-
-
-
-
-
-
-
-/*
-        StringBuffer jSon = new StringBuffer();
-        if(this == null ){
-
-        }else {
-            AbstractBTreeNode curNode = this;
-            Stack<AbstractBTreeNode> lastChild = new Stack<>();
-            Stack<AbstractBTreeNode> parentStack = new Stack<>();
-            while(true) {
-                //parentStack.push(curNode);
-                String out1 = jSon.toString();
-                System.out.println(out1);
-                jSon.append("{");
-                jSon.append("[");
-                for (int i = 0; i < curNode.getKeys().size(); i++) {
-                    int insert = curNode.getKeys().get(i);
-                    jSon.append(insert);
-                    if (i != curNode.getKeys().size() - 1) {
-                        jSon.append(",");
-                    }
-                }
-                jSon.append("]");
-
-                boolean curNodeChanged = false;
-                if(curNode.getChildren().size() > 0){
-                    jSon.append(",[");
-                    for (int i = 0; i < curNode.getChildren().size(); i++){
-                        if(i < curNode.getChildren().size()){
-                            if(lastChild.size() == 0 || curNode.getChildren().get(i) != lastChild.peek()){
-                                parentStack.push(curNode);
-                                curNode = curNode.getChildren().get(i);
-                                curNodeChanged = true;
-                                break;
-                            }else{
-                                continue;
-                            }
-                        }
-                    }
-                    if(curNodeChanged){
-                        continue;
-                    }else{
-                        parentStack.pop();
-                        if(parentStack.size()== 0){
-                            break;
-                        }
-                        curNode = parentStack.peek();
-                    }
-                }else{
-                    //parentStack.pop();
-                    if(parentStack.size()== 0){
-                        break;
-                    }
-                    lastChild.push(curNode);
-                    curNode = parentStack.peek();
-                    parentStack.pop();
-
-                }
-            }
         }
-        return jSon.toString();
- */
+
+
+        //return json.toString();
     }
 
     public static void main(String[] args) {

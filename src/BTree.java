@@ -150,7 +150,7 @@ public class BTree extends AbstractBTree {
 
         AbstractBTreeNode btreeNode = bTree0.getRoot();
 
-        BTreeNode.traverse(btreeNode);
+        //BTreeNode.traverse(btreeNode);
 
         bTree0.toJson();
 
