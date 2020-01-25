@@ -9,7 +9,6 @@ import java.util.Stack;
 public class BTree extends AbstractBTree {
     public BTree(int degree) {
         super(degree);
-        //this.setRoot(new BTreeNode(degree));
     }
 
     @Override
@@ -23,71 +22,8 @@ public class BTree extends AbstractBTree {
 
     @Override
     public void insert(int key) {
-        System.out.println("BTree-----------------------------------------------------------------------");
-        if(this.hasKey(key)){
-            System.out.println("BTree contains key already");
-            return;
-        }
-        if(this.getRoot() == null){
-            this.setRoot(new BTreeNode(this.getDegree()));
-        }
-        AbstractBTreeNode curNode = this.getRoot();
-        Comparator<Integer> cmp = Comparator.naturalOrder();
-        Stack<AbstractBTreeNode> parentStack = new Stack<>();
+        //TODO
 
-        AbstractBTreeNode curNodeCP = curNode;
-        while(true){
-            int i;
-            for(i = 0; i < curNodeCP.getKeys().size(); i++){
-                if(curNodeCP.getKeys().get(i) > key){
-                    break;
-                }
-            }
-            parentStack.push(curNodeCP);
-            if (i >= curNodeCP.getChildren().size()){
-                break;
-            }else{
-                curNodeCP = curNodeCP.getChildren().get(i);
-            }
-        }
-        curNode = curNodeCP;
-        OverflowNode ovfl = curNode.insert(key);
-        while(true) {
-            if(ovfl == null){
-                return;
-            }else{
-                parentStack.pop();
-                if(parentStack.size() < 1){
-                    if(parentStack.size() == 0) {
-                        AbstractBTreeNode newRoot = new BTreeNode(curNode.getDegree());
-                        newRoot.addKey(ovfl.getKey());
-                        newRoot.addChild(curNode);
-                        newRoot.addChild(ovfl.getRightChild());
-                        this.setRoot(newRoot);
-                        return;
-                    }
-                }else {
-                    curNode = parentStack.peek();
-                    ArrayList<Integer> keys = curNode.getKeys();
-                    ArrayList<AbstractBTreeNode> children = curNode.getChildren();
-
-                    key = ovfl.getKey();
-
-                    keys.add(key);
-                    keys.sort(cmp);
-
-                    children.add(ovfl.getRightChild());
-                    BTreeNode.sortAL(children);
-
-                    if (keys.size() > 2 * curNode.getDegree()) {
-                        ovfl = curNode.split();
-                        continue;
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
     }
 
     @Override
