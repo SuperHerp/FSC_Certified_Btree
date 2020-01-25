@@ -124,6 +124,7 @@ public class BTreeNode extends AbstractBTreeNode{
         AbstractBTreeNode curNode = new BTreeNode(this.getDegree());
         Stack<AbstractBTreeNode> parents = new Stack<AbstractBTreeNode>();
         ArrayList<Integer> keys;
+        ArrayList<AbstractBTreeNode> children;
 
         while (true) { //find leaf on wich to insert and create stack containing parents
             int i;
@@ -145,8 +146,6 @@ public class BTreeNode extends AbstractBTreeNode{
                 continue;
             }
         }
-
-
         keys = curNode.getKeys();
         keys.add(key);
         keys.sort(Comparator.naturalOrder()); //i mean i can sort my ints myself but yeah
@@ -157,10 +156,21 @@ public class BTreeNode extends AbstractBTreeNode{
 
         OverflowNode ovfl = curNode.split();
         OverflowNode ovflBAK = ovfl; //copy just to make sure
+
         while (true){
+            if(ovfl == null){
+                break;
+            }
             if(parents.size() == 0){
                 //TODO
                 //root changes...
+                AbstractBTreeNode newRoot = new BTreeNode(curNode.getDegree());
+
+                newRoot.addKey(ovfl.getKey());
+                newRoot.addChild(curNode);
+                newRoot.addChild(ovfl.getRightChild());
+
+                break;
             }
             curNode = parents.peek();
             parents.pop();
@@ -173,15 +183,47 @@ public class BTreeNode extends AbstractBTreeNode{
             keys.sort(Comparator.naturalOrder());
 
             int index = keys.indexOf(key);
+            children = curNode.getChildren();
+            children.add(index+1, ovflRight);
 
+            if(keys.size() > curNode.getDegree() * 2){
+                ovfl = curNode.split();
+                continue;
+            }else{
+                break;
+            }
         }
-
+        return ovflBAK;
     }
 
 
     @Override
     public OverflowNode split() {
         //TODO
+        AbstractBTreeNode curNode = this;
+        AbstractBTreeNode ovflRight = new BTreeNode(this.getDegree());
+        ArrayList<Integer> keys;
+        ArrayList<AbstractBTreeNode> children;
+        OverflowNode ovfl;
+        int ovflKey;
+
+        keys = curNode.getKeys();
+        children = curNode.getChildren();
+        ovflKey = keys.get(keys.size()/2);
+
+        int constIndex = keys.size()/2+1;
+        for(int i = 0; i <= curNode.getDegree(); i++ ){
+            ovflRight.addChild(children.get(constIndex));
+            children.remove(constIndex);
+            if(i < curNode.getDegree()) {
+                ovflRight.addKey(keys.get(constIndex));
+                keys.remove(constIndex);
+            }
+        }
+
+        ovfl = new OverflowNode(ovflKey, ovflRight);
+
+        return ovfl;
     }
 
 
@@ -302,7 +344,7 @@ public class BTreeNode extends AbstractBTreeNode{
         test.addChild(child1);
         test.addChild(child2);
 
-        sortAL(test.getChildren());
+        //sortAL(test.getChildren());
 
         int debug = -1;
     }

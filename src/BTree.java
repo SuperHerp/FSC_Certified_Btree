@@ -23,6 +23,8 @@ public class BTree extends AbstractBTree {
     @Override
     public void insert(int key) {
         //TODO
+        this.getRoot().hasKey(key);
+        return;
 
     }
 
