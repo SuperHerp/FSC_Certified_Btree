@@ -55,7 +55,7 @@ public class BTreeNode extends AbstractBTreeNode{
             }
         }
     }
-
+*/
     public static ArrayList<AbstractBTreeNode> sortAL(ArrayList<AbstractBTreeNode> toSort){
         AbstractBTreeNode swapA;
         AbstractBTreeNode swapB;
@@ -105,7 +105,6 @@ public class BTreeNode extends AbstractBTreeNode{
         }
         return toSort;
     }
-    */
 
     @Override
     public OverflowNode insert(int key) {
@@ -330,6 +329,10 @@ public class BTreeNode extends AbstractBTreeNode{
     public static void main(String[] args) {
 
         int degree = 2;
+
+        ArrayList
+
+
 /*
         AbstractBTreeNode bTree0 = new BTreeNode(degree);
 

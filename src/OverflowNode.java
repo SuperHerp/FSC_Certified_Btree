@@ -1,15 +1,15 @@
 public class OverflowNode {
 	// the key in the node
-	private final Integer key;
+	private final FileContainer key;
 	// the right successor
 	private final AbstractBTreeNode rightChild;
 
-	public OverflowNode(Integer key, AbstractBTreeNode rightChild) {
+	public OverflowNode(FileContainer key, AbstractBTreeNode rightChild) {
 		this.key = key;
 		this.rightChild = rightChild;
 	}
 
-	public Integer getKey() {
+	public FileContainer getKey() {
 		return key;
 	}
 

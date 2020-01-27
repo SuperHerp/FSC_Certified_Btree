@@ -73,7 +73,7 @@ public abstract class AbstractBTree {
 	 * @param key element whose presence in this BTree is to be tested
 	 * @return {@literal true} if this BTree contains the specified element
 	 */
-	public abstract boolean hasKey(int key);
+	public abstract boolean hasKey(String key);
 
 	/**
 	 * Inserts the given key into this BTree if not already present.
@@ -81,15 +81,15 @@ public abstract class AbstractBTree {
 	 * If this BTree is empty (i.e. {@link #root} is {@literal null}) then a new {@link #root} node with the same {@link #degree} as this BTree is created first.
 	 * </p>
 	 * <p>
-	 * The insertion of the given key is always delegated to the {@link AbstractBTreeNode#insert(int)} method of the {@link #root} node of this BTree.
+	 * The insertion of the given key is always delegated to the {@link AbstractBTreeNode#insert(FileContainer)} method of the {@link #root} node of this BTree.
 	 * </p>
-	 * If {@link AbstractBTreeNode#insert(int)} returns an {@link OverflowNode} then the {@link #root} of this BTree is replaced by a new root node.
+	 * If {@link AbstractBTreeNode#insert(FileContainer)} returns an {@link OverflowNode} then the {@link #root} of this BTree is replaced by a new root node.
 	 * The old {@link #root} node of this BTree becomes the left child of the new root node. The single key and the right child of the new root node are copied over from the {@link OverflowNode}.
 	 *
 	 * @param key the value to be inserted into this BTree
-	 * @see AbstractBTreeNode#insert(int)
+	 * @see AbstractBTreeNode#insert(FileContainer)
 	 */
-	public abstract void insert(int key);
+	public abstract void insert(FileContainer key);
 
 	/**
 	 * Returns a string representation of the {@link #root} node of this BTree in the JSON format or <samp>"{}"</samp> if this BTree is empty (i.e. {@link #root} is {@literal null}).

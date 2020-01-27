@@ -1,5 +1,6 @@
 import org.junit.Assert;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Stack;
@@ -10,55 +11,41 @@ public class BTreeNode extends AbstractBTreeNode{
     }
 
     @Override
-    public boolean hasKey(int key) {
+    public boolean hasKey(String key) {
         AbstractBTreeNode curNode = this;
         while(true) {
-            if(curNode.getKeys().contains(key)) {
-                return true;
-            }else {
-                int cmp;
-                int i;
-                for (i = 0; i < curNode.getKeys().size(); i++) {
-                    cmp = key - curNode.getKeys().get(i);
-                    if(cmp < 0) {
-                        break;
-                    }
-                }
-                if(i < curNode.getChildren().size()) {
-                    curNode = curNode.getChildren().get(i);
-                }else {
-                    return false;
-                }
-            }
-        }
-    }
-
-    //should not use these .... but maybe i will
-
-    /*
-    public static ArrayList<AbstractBTreeNode> find_Leaf_and_Parents(AbstractBTreeNode cur, int key) {
-        AbstractBTreeNode curNode = cur;
-        ArrayList<AbstractBTreeNode> parents = new ArrayList<AbstractBTreeNode>();
-        while(true){
-            int i;
-            for(i = 0; i < curNode.getKeys().size(); i++){
-                if(curNode.getKeys().get(i) > key){
+            ArrayList<FileContainer> keys = curNode.getKeys();
+            int index = -1;
+            for(int i = 0; i < keys.size(); i++){
+                int cmp = key.compareTo(keys.get(i).getName());
+                //int cmp = keys.get(i).name.compareTo(key);
+                if(cmp == 0){
+                    return true;
+                }else if(cmp > 0){
+                    continue;
+                }else if(cmp < 0){
+                    index = i;
                     break;
                 }
             }
-            parents.add(curNode);
-            if(i >= curNode.getChildren().size()){
-                return parents;
+            if(index == -1){
+                return false;
+            }
+            if(index < curNode.getChildren().size()) {
+                curNode = curNode.getChildren().get(index);
             }else {
-                curNode = curNode.getChildren().get(i);
-                continue;
+                return false;
             }
         }
     }
 
-    public static ArrayList<AbstractBTreeNode> sortAL(ArrayList<AbstractBTreeNode> toSort){
-        AbstractBTreeNode swapA;
-        AbstractBTreeNode swapB;
+    @Override
+    public ArrayList<FileContainer> sort(ArrayList<FileContainer> toSort) {
+        FileContainer cmp = new FileContainer("Comparator", "FileContainer=>compare()");
+        FileContainer swapA;
+        int indexA;
+        FileContainer swapB;
+        int indexB;
         int arrSize = toSort.size();
         if(arrSize <= 1){
             return toSort;
@@ -68,47 +55,41 @@ public class BTreeNode extends AbstractBTreeNode{
             for(int j = i+1; j < arrSize; j++){
                 swapB = toSort.get(j);
 
-                int keyMinA = swapA.getKeys().get(0);
-                int keyMaxA = swapA.getKeys().get(swapA.getKeys().size()-1);
+                if(cmp.compare(swapA, swapB) == 0){
+                    return toSort;
+                }else if(cmp.compare(swapA, swapB) < 0){ // A < B
+                    indexA = toSort.indexOf(swapA);
+                    indexB = toSort.indexOf(swapB);
 
-                int keyMinB = swapB.getKeys().get(0);
-                int keyMaxB = swapB.getKeys().get(swapB.getKeys().size()-1);
+                    if(indexA > indexB){
+                        toSort.remove(indexA);
+                        toSort.add(indexA, swapB);
 
-                if(keyMaxA > keyMinB){
-                    //A > b
-                    int indexA = toSort.indexOf(swapA);
-                    int indexB = toSort.indexOf(swapB);
+                        toSort.remove(indexB);
+                        toSort.add(indexB, swapA);
+                    }
+                }else if(cmp.compare(swapA, swapB) > 0){ // A > B
+                    indexA = toSort.indexOf(swapA);
+                    indexB = toSort.indexOf(swapB);
 
                     if(indexA < indexB){
-                        toSort.remove(indexA);
-                        toSort.add(indexA, swapB);
-
                         toSort.remove(indexB);
                         toSort.add(indexB, swapA);
-                    }
-                }
-                if(keyMaxB > keyMinA) {
-                    //B > A
-                    int indexA = toSort.indexOf(swapA);
-                    int indexB = toSort.indexOf(swapB);
-
-                    if (indexB < indexA) {
 
                         toSort.remove(indexA);
-                        toSort.remove(indexB);
-
-                        toSort.add(indexB, swapA);
                         toSort.add(indexA, swapB);
                     }
                 }
+
             }
         }
-        return toSort;
+
+
+        return null;
     }
-    */
 
     @Override
-    public OverflowNode insert(int key) {
+    public OverflowNode insert(FileContainer key) {
         //TODO
         /**
          * find leaf in wich the key should be added(remember last parent ALWAYS)
@@ -126,15 +107,22 @@ public class BTreeNode extends AbstractBTreeNode{
         //AbstractBTreeNode curNode = new BTreeNode(this.getDegree());
         AbstractBTreeNode curNode = this;
         Stack<AbstractBTreeNode> parents = new Stack<AbstractBTreeNode>();
-        ArrayList<Integer> keys;
+        ArrayList<FileContainer> keys;
         ArrayList<AbstractBTreeNode> children;
 
         while (true) { //find leaf on wich to insert and create stack containing parents
             int i;
             for (i = 0; i < curNode.getKeys().size(); i++) {
-                if (curNode.getKeys().get(i) > key) {
+
+                int cmp = curNode.getKeys().get(i).name.compareTo(key.name);
+                if(cmp == 0){
+                    //return true;
+                }else if(cmp > 0){
+                    continue;
+                }else if(cmp < 0){
                     break;
                 }
+
             }
 
             if(curNode.getChildren().size() == 0){
@@ -150,9 +138,15 @@ public class BTreeNode extends AbstractBTreeNode{
             }
         }
 
+        keys = curNode.getKeys();
+        keys.add(key);
+        keys = curNode.sort(keys);
+
+
+        /*
         curNode.getKeys().add(key);
         curNode.getKeys().sort(Comparator.naturalOrder());
-
+        */
         if(curNode.getKeys().size() <= curNode.getDegree() * 2 ){ //no need to split
             return null;
         }
@@ -183,8 +177,15 @@ public class BTreeNode extends AbstractBTreeNode{
             key = ovfl.getKey();
             AbstractBTreeNode ovflRight = ovfl.getRightChild();
 
+            keys = curNode.getKeys();
+            keys.add(key);
+            keys = curNode.sort(keys);
+
+            /*
             curNode.getKeys().add(key);
             curNode.getKeys().sort(Comparator.naturalOrder());
+            */
+
             int index = curNode.getKeys().indexOf(key);
             curNode.getChildren().add(index+1, ovflRight);
 
@@ -197,6 +198,7 @@ public class BTreeNode extends AbstractBTreeNode{
         }
         return ovflBAK;
     }
+
 
 
     @Override
@@ -266,9 +268,9 @@ public class BTreeNode extends AbstractBTreeNode{
                 parents.push(curNode);
                 for(int i = 0; i < curNode.getKeys().size(); i++){
                     if(i < curNode.getKeys().size()-1){ //last key?  no => append  i-key + ","
-                        json.append(curNode.getKeys().get(i) + ",");
+                        json.append("<" + curNode.getKeys().get(i).getName() + ";" + curNode.getKeys().get(i).path + ">" + ",");
                     }else { //last key? yes => append i-key + "]"
-                        json.append(curNode.getKeys().get(i) + "]");
+                        json.append("<" + curNode.getKeys().get(i).getName() + ";" + curNode.getKeys().get(i).path + ">" + "]");
                     }
                 }
             }else{ //curnode is checked? => skip adding values
