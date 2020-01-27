@@ -110,7 +110,9 @@ public abstract class AbstractBTreeNode {
 	 *
 	 * @return sorted FileContainerList
 	 */
-	public abstract ArrayList<FileContainer> sort(ArrayList<FileContainer> toSort);
+	//public abstract ArrayList<FileContainer> sort(ArrayList<FileContainer> toSort);
+	public abstract ArrayList<FileContainer> quickSortAR(ArrayList<FileContainer> toSort);
+	public abstract ArrayList<AbstractBTreeNode> quickSortKids(ArrayList<AbstractBTreeNode> toSort);
 
 	/**
 	 * <b>Recursively</b> inserts the given key into the BTree rooted at this BTreeNode.

@@ -29,6 +29,11 @@ public class BTreeNode extends AbstractBTreeNode{
                 }
             }
             if(index == -1){
+                if(curNode.getChildren().size() != 0){
+                    index = curNode.getKeys().size();
+                    curNode = curNode.getChildren().get(index);
+                    continue;
+                }
                 return false;
             }
             if(index < curNode.getChildren().size()) {
@@ -39,6 +44,147 @@ public class BTreeNode extends AbstractBTreeNode{
         }
     }
 
+    public int compareAToB(AbstractBTreeNode a, AbstractBTreeNode b){
+        FileContainer aMax, aMin, bMax, bMin;
+        FileContainer cmprtr = new FileContainer("Comparator", "");
+        int cmp1, cmp2;
+
+        aMax = a.getKeys().get(a.getKeys().size() - 1);
+        aMin = a.getKeys().get(0);
+
+        bMax = b.getKeys().get(b.getKeys().size() - 1);
+        bMin = b.getKeys().get(0);
+
+        cmp1 = cmprtr.compare(aMax, bMin);
+        cmp2 = cmprtr.compare(bMax, aMin);
+
+        if(cmp1 < 0){
+            return -1;// A < B
+        }else if(cmp1 > 0){ // B < A ?
+            if(cmp2 < 0){
+                return 1;// B < A
+            }else if(cmp2 > 0){
+                return -1;// A < B
+            }
+        }
+        return -2;
+    }
+
+    public ArrayList<AbstractBTreeNode> quickSortKids(ArrayList<AbstractBTreeNode> aL){
+        AbstractBTreeNode swapA, swapB;
+        int cmp, indA, indB;
+
+        while(true){
+            boolean noChanges = true;
+
+            for (int i = 0; i < aL.size(); i ++){
+                swapA = aL.get(i);
+                for(int j = i+1; j < aL.size(); j++){
+                    swapB = aL.get(j);
+
+                    cmp = this.compareAToB(swapA, swapB);
+
+                    switch (cmp){
+                        case(0):
+                            break;
+                        case(-1)://A < B
+                            indA = aL.indexOf(swapA);
+                            indB = aL.indexOf(swapB);
+
+                            if(indA > indB){
+                                aL.remove(indA);
+                                aL.add(indA, swapB);
+
+                                aL.remove(indB);
+                                aL.add(indB, swapA);
+                                noChanges = false;
+                            }
+                            break;
+                        case(1)://B < A
+                            indA = aL.indexOf(swapA);
+                            indB = aL.indexOf(swapB);
+
+                            if(indB > indA){
+                                aL.remove(indA);
+                                aL.add(indA, swapB);
+
+                                aL.remove(indB);
+                                aL.add(indB, swapA);
+                                noChanges = false;
+                            }
+                            break;
+                        case(-2):
+                            System.out.println("critical error");
+                    }
+
+                }
+            }
+            if (noChanges == true){
+                break;
+            }
+
+        }
+        return aL;
+    }
+
+    @Override
+    public ArrayList<FileContainer> quickSortAR(ArrayList<FileContainer> aL){
+        boolean noChanges;
+        FileContainer cmprtr = new FileContainer("Comparator", "");
+        FileContainer swapA, swapB;
+        int cmp, indA, indB;
+
+        while(true){
+            noChanges = true;
+            for(int i = 0; i < aL.size(); i++){
+                swapA = aL.get(i);
+                for(int j = i+1; j < aL.size(); j++){
+                    swapB = aL.get(j);
+
+                    cmp = cmprtr.compare(swapA, swapB);
+
+                    switch (cmp){
+                        case(0):
+                            break;
+                        case(-1)://A < B
+                            indA = aL.indexOf(swapA);
+                            indB = aL.indexOf(swapB);
+
+                            if(indA > indB){
+                                aL.remove(indA);
+                                aL.add(indA, swapB);
+
+                                aL.remove(indB);
+                                aL.add(indB, swapA);
+                                noChanges = false;
+                            }
+                            break;
+                        case(1)://B < A
+                            indA = aL.indexOf(swapA);
+                            indB = aL.indexOf(swapB);
+
+                            if(indB > indA){
+                                aL.remove(indA);
+                                aL.add(indA, swapB);
+
+                                aL.remove(indB);
+                                aL.add(indB, swapA);
+                                noChanges = false;
+                            }
+                            break;
+                    }
+                }
+            }
+            if(noChanges == true){
+                break;
+            }
+        }
+        return aL;
+    }
+
+
+
+    /*
     @Override
     public ArrayList<FileContainer> sort(ArrayList<FileContainer> toSort) {
         FileContainer cmp = new FileContainer("Comparator", "FileContainer=>compare()");
@@ -83,10 +229,10 @@ public class BTreeNode extends AbstractBTreeNode{
 
             }
         }
-
-
         return null;
     }
+    */
+
 
     @Override
     public OverflowNode insert(FileContainer key) {
@@ -106,16 +252,23 @@ public class BTreeNode extends AbstractBTreeNode{
 
         //AbstractBTreeNode curNode = new BTreeNode(this.getDegree());
         AbstractBTreeNode curNode = this;
+        FileContainer cmprtr = new FileContainer("Comparator", "");
         Stack<AbstractBTreeNode> parents = new Stack<AbstractBTreeNode>();
         ArrayList<FileContainer> keys;
         ArrayList<AbstractBTreeNode> children;
+
+        if(curNode.get_bTree().getRoot().hasKey(key.getName())){
+            return null;
+        }
 
         while (true) { //find leaf on wich to insert and create stack containing parents
             int i;
             for (i = 0; i < curNode.getKeys().size(); i++) {
 
-                int cmp = curNode.getKeys().get(i).name.compareTo(key.name);
+                int cmp = cmprtr.compare(curNode.getKeys().get(i), key);
+                //int cmp = curNode.getKeys().get(i).name.compareTo(key.name);
                 if(cmp == 0){
+                    return null;
                     //return true;
                 }else if(cmp > 0){
                     continue;
@@ -140,7 +293,7 @@ public class BTreeNode extends AbstractBTreeNode{
 
         keys = curNode.getKeys();
         keys.add(key);
-        keys = curNode.sort(keys);
+        keys = curNode.quickSortAR(keys);
 
 
         /*
@@ -179,15 +332,21 @@ public class BTreeNode extends AbstractBTreeNode{
 
             keys = curNode.getKeys();
             keys.add(key);
-            keys = curNode.sort(keys);
+            keys = curNode.quickSortAR(keys);
+
+            children = curNode.getChildren();
+            children.add(ovflRight);
+            children = curNode.quickSortKids(children);
+
+            //keys = curNode.sort(keys);
 
             /*
             curNode.getKeys().add(key);
             curNode.getKeys().sort(Comparator.naturalOrder());
-            */
 
             int index = curNode.getKeys().indexOf(key);
             curNode.getChildren().add(index+1, ovflRight);
+            */
 
             if(curNode.getKeys().size() > curNode.getDegree() * 2){
                 ovfl = curNode.split();
@@ -232,8 +391,8 @@ public class BTreeNode extends AbstractBTreeNode{
 
     }
 
-
     // { [9,22],[{[2,8]},{[17,21]},{[23,24,25]}] }
+
     @Override
     public String toJson() {
 
@@ -246,7 +405,7 @@ public class BTreeNode extends AbstractBTreeNode{
          * if child exists => enter first unchecked child
          * goto start;
          *
-         * else if cur is leaf(got leaf?)? || cur children all checked => 
+         * else if cur is leaf(got leaf?)? || cur children all checked =>
          *      check leaf
          *
          *      go to parent of curNode
@@ -331,6 +490,10 @@ public class BTreeNode extends AbstractBTreeNode{
 
     public static void main(String[] args) {
 
+        String a = "AAA";
+        String b = "AAA";
+        int cmp = a.compareTo(b);
+
         int degree = 2;
 /*
         AbstractBTreeNode bTree0 = new BTreeNode(degree);
@@ -360,6 +523,7 @@ public class BTreeNode extends AbstractBTreeNode{
         String expected = "{keys:[15],children:[{keys:[9, 12],children:[{keys:[2,8]},{keys:[10,11]},{keys:[13,14]},]},{keys:[22,25],children:[{keys:[17,21]},{keys:[23,24]},{keys:[27,30]},]}]}";
 
         Assert.assertEquals("unequal", expected, bTree0.toJson());
+
 */
         int debug = -1;
     }
