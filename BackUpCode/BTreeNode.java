@@ -1,12 +1,11 @@
-import org.junit.Assert;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Stack;
 
 public class BTreeNode extends AbstractBTreeNode{
-    public BTreeNode(int degree) {
-        super(degree);
+    public BTreeNode(int degree, AbstractBTree bTree) {
+        super(degree, bTree);
+
     }
 
     @Override
@@ -33,9 +32,6 @@ public class BTreeNode extends AbstractBTreeNode{
         }
     }
 
-    //should not use these .... but maybe i will
-
-    /*
     public static ArrayList<AbstractBTreeNode> find_Leaf_and_Parents(AbstractBTreeNode cur, int key) {
         AbstractBTreeNode curNode = cur;
         ArrayList<AbstractBTreeNode> parents = new ArrayList<AbstractBTreeNode>();
@@ -60,9 +56,6 @@ public class BTreeNode extends AbstractBTreeNode{
         AbstractBTreeNode swapA;
         AbstractBTreeNode swapB;
         int arrSize = toSort.size();
-        if(arrSize <= 1){
-            return toSort;
-        }
         for(int i = 0; i < arrSize; i++){
             swapA = toSort.get(i);
             for(int j = i+1; j < arrSize; j++){
@@ -105,144 +98,118 @@ public class BTreeNode extends AbstractBTreeNode{
         }
         return toSort;
     }
-    */
 
     @Override
     public OverflowNode insert(int key) {
-        //TODO
-        /**
-         * find leaf in wich the key should be added(remember last parent ALWAYS)
-         * add key to keyList
-         * check keylist size
-         * bigger than 2*curnode.Degree?(check)
-         *      yes => curnode needs to be split
-         *          call .split() (ovfl = curnode.split)
-         *          if ovfl != null => insert ovfl in parent and start check again
-         *          if ovfl == null => return ovfl
-         *
-         *      no => return null (ovfl = null)
-         */
+        System.out.println("Trying to insert key: " + key + " ...");
+        if(this.hasKey(key) == true){
+            System.out.println("Tried to insert but key: " + key + " was already added to this tree!");
+            return null;
+        }else{
+            System.out.println("Key: " + key + " can be added!");
+            Comparator<Integer> cmp = Comparator.naturalOrder();
+            ArrayList<AbstractBTreeNode> parents = find_Leaf_and_Parents(this, key);
+            AbstractBTreeNode curNode = parents.get(parents.size()-1);
+            AbstractBTreeNode ovflRight = null;
+            while(true) {
+                if(curNode.hasKey(key)){
+                    return null;
+                }
+                ArrayList<Integer> keys = curNode.getKeys();
+                keys.add(key);
+                keys.sort(cmp);
+                if (keys.size() > 2*curNode.getDegree()) {
+                    OverflowNode ovfl = curNode.split();
+                    OverflowNode ovfl_bak = ovfl;
+//--------------------------------------------------------------------------------------------
+                    /*
+                    Stack<AbstractBTreeNode> parentStack = new Stack<>();
+                    while(true) {
+                        if(ovfl == null){
+                            return null;
+                        }else{
+                            if(parentStack.size() != 0) {
+                                parentStack.pop();
+                            }
+                            if(parentStack.size() < 1){
+                                if(parentStack.size() == 0) {
+                                    AbstractBTreeNode newRoot = new BTreeNode(curNode.getDegree());
+                                    newRoot.addKey(ovfl.getKey());
+                                    newRoot.addChild(curNode);
+                                    newRoot.addChild(ovfl.getRightChild());
+                                    //this.setRoot(newRoot);
+                                    return ovfl;
+                                }
+                            }else {
+                                curNode = parentStack.peek();
+                                ArrayList<Integer> keys2 = curNode.getKeys();
+                                ArrayList<AbstractBTreeNode> children = curNode.getChildren();
 
-        //AbstractBTreeNode curNode = new BTreeNode(this.getDegree());
-        AbstractBTreeNode curNode = this;
-        Stack<AbstractBTreeNode> parents = new Stack<AbstractBTreeNode>();
-        ArrayList<Integer> keys;
-        ArrayList<AbstractBTreeNode> children;
+                                key = ovfl.getKey();
 
-        while (true) { //find leaf on wich to insert and create stack containing parents
-            int i;
-            for (i = 0; i < curNode.getKeys().size(); i++) {
-                if (curNode.getKeys().get(i) > key) {
+                                keys2.add(key);
+                                keys2.sort(cmp);
+
+                                children.add(ovfl.getRightChild());
+                                BTreeNode.sortAL(children);
+
+                                if (keys2.size() >= 2 * curNode.getDegree()) {
+                                    ovfl = curNode.split();
+                                    continue;
+                                } else {
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    */
+//--------------------------------------------------------------------------------------------
+
+
+                    if (ovfl != null) {
+                        return ovfl;
+                    }else{
+                        System.out.println("Illegal state exception!");
+                    }
+
+                }else{
                     break;
                 }
             }
-
-            if(curNode.getChildren().size() == 0){
-                break;
-            }
-            if (i >= curNode.getChildren().size()) {
-                break;
-                //return parents;
-            } else {
-                parents.push(curNode);
-                curNode = curNode.getChildren().get(i);
-                continue;
-            }
         }
-
-        curNode.getKeys().add(key);
-        curNode.getKeys().sort(Comparator.naturalOrder());
-
-        /*
-        keys = curNode.getKeys();
-        keys.add(key);
-        keys.sort(Comparator.naturalOrder()); //i mean i can sort my ints myself but yeah
-        */
-        if(curNode.getKeys().size() <= curNode.getDegree() * 2 ){ //no need to split
-            return null;
-        }
-
-        OverflowNode ovfl = curNode.split();
-        OverflowNode ovflBAK = ovfl; //copy just to make sure
-
-        while (true){
-            if(ovfl == null){
-                break;
-            }
-            if(parents.size() == 0){
-                //TODO
-                //root changes...
-                AbstractBTreeNode newRoot = new BTreeNode(curNode.getDegree());
-
-                newRoot.addKey(ovfl.getKey());
-                newRoot.addChild(curNode);
-                newRoot.addChild(ovfl.getRightChild());
-                // setRoot(newRoot);
-
-                break;
-            }
-            curNode = parents.peek();
-            parents.pop();
-
-            key = ovfl.getKey();
-            AbstractBTreeNode ovflRight = ovfl.getRightChild();
-
-            curNode.getKeys().add(key);
-            curNode.getKeys().sort(Comparator.naturalOrder());
-            int index = curNode.getKeys().indexOf(key);
-
-            curNode.getChildren().add(index+1, ovflRight);
-
-            /*
-            keys = curNode.getKeys();
-            keys.add(key);
-            keys.sort(Comparator.naturalOrder());
-
-            int index = keys.indexOf(key);
-            children = curNode.getChildren();
-            children.add(index+1, ovflRight);
-            */
-            if(curNode.getKeys().size() > curNode.getDegree() * 2){
-                ovfl = curNode.split();
-                continue;
-            }else{
-                break;
-            }
-        }
-        return ovflBAK;
+        return null;
     }
-
 
     @Override
     public OverflowNode split() {
-        //TODO
-        AbstractBTreeNode curNode = this;
-        AbstractBTreeNode ovflRight = new BTreeNode(this.getDegree());
-        ArrayList<Integer> keys;
-        ArrayList<AbstractBTreeNode> children;
-        OverflowNode ovfl;
-        int ovflKey;
+        if(this.getKeys().size() > 2*this.getDegree()) {
+            AbstractBTreeNode curNode = this;
+            AbstractBTreeNode rch = new BTreeNode(curNode.getDegree(), curNode.get_bTree());
 
-        keys = curNode.getKeys();
-        children = curNode.getChildren();
-        ovflKey = keys.get(keys.size()/2);
-        keys.remove(keys.size()/2);
+            int j = curNode.getDegree()+1;
+            for(int i = 0; i < curNode.getDegree(); i++){
+                rch.addKey(curNode.getKeys().get(j));
+                curNode.getKeys().remove(j);
 
-        int constIndex = keys.size()/2/*+1*/;
-        for(int i = 0; i <= curNode.getDegree(); i++ ){
-            if(i < curNode.getDegree()) {
-                ovflRight.addKey(keys.get(constIndex));
-                keys.remove(constIndex);
+                if(j >= curNode.getChildren().size()){
+                    continue;
+                }else {
+                    rch.addChild(curNode.getChildren().get(j));
+                    if(i == getDegree()-1){
+                        rch.addChild(curNode.getChildren().get(j+1));
+                        curNode.getChildren().remove(j+1);
+                    }
+                    curNode.getChildren().remove(j);
+                    continue;
+                }
             }
-            if(children.size() != 0) {
-                ovflRight.addChild(children.get(constIndex));
-                children.remove(constIndex);
-            }
+
+            OverflowNode ovfNode = new OverflowNode(curNode.getKeys().get(curNode.getDegree()), rch);
+            curNode.getKeys().remove(j-1);
+            return ovfNode;
+        }else{
+            return null;
         }
-
-        ovfl = new OverflowNode(ovflKey, ovflRight);
-
-        return ovfl;
     }
 
 
@@ -272,10 +239,11 @@ public class BTreeNode extends AbstractBTreeNode{
         Stack<AbstractBTreeNode> lastChild = new Stack<>();
 
         while(true){
-            // curNode is root => if all children visited? => break;
+
             if(parents.size() == 0 && lastChild.containsAll(curNode.getChildren())){
                 break;
             }
+
             if(!parents.contains(curNode)){ //curNode unchecked? => add key to json
                 json.append("{keys:[");
                 parents.push(curNode);
@@ -320,7 +288,8 @@ public class BTreeNode extends AbstractBTreeNode{
                 }
                 //index could be -1 => all children of curnode were visited => go to parent of curnode
                 if (index == -1) {
-                    //reached end of curNode => json.append("]}")
+                    //if()
+                    //reached end of curNode => json.append("]")
                     json.append("]}");
                     lastChild.push(curNode);
                     if (parents.size() != 0) {
@@ -334,6 +303,7 @@ public class BTreeNode extends AbstractBTreeNode{
                 }
                 // if index != -1 add curNode to parents and set curnode to i-child of curnode and start from beginning
                 if (index > -1) {
+                    //parents.push(curNode);
                     curNode = curNode.getChildren().get(index);
                 }
             }
@@ -344,37 +314,6 @@ public class BTreeNode extends AbstractBTreeNode{
 
     public static void main(String[] args) {
 
-        int degree = 2;
-
-        AbstractBTree btree = new BTree(degree);
-        AbstractBTreeNode bTree0 = new BTreeNode(degree);
-        btree.setRoot(bTree0);
-
-        bTree0.insert(2);
-        bTree0.insert(8);
-        bTree0.insert(9);
-        bTree0.insert(17);
-
-        bTree0.insert(23);
-        bTree0.insert(21);
-        bTree0.insert(22);
-        bTree0.insert(24);
-
-        bTree0.insert(25);
-        bTree0.insert(30);
-        bTree0.insert(27);
-        bTree0.insert(10);
-
-        bTree0.insert(11);
-        bTree0.insert(12);
-        bTree0.insert(13);
-        bTree0.insert(14);
-
-        bTree0.insert(15);
-
-        String expected = "{keys:[15],children:[{keys:[9, 12],children:[{keys:[2,8]},{keys:[10,11]},{keys:[13,14]},]},{keys:[22,25],children:[{keys:[17,21]},{keys:[23,24]},{keys:[27,30]},]}]}";
-
-        Assert.assertEquals("unequal", expected, bTree0.toJson());
 
         int debug = -1;
     }

@@ -8,6 +8,10 @@ import java.util.ArrayList;
  */
 public abstract class AbstractBTreeNode {
 	/**
+	 * BTree containing this node
+	 */
+	private AbstractBTree bTree;
+	/**
 	 * The degree of this BTreeNode. It must be the same for all nodes of the tree to which this node belongs to.
 	 *
 	 * @see AbstractBTree
@@ -31,9 +35,18 @@ public abstract class AbstractBTreeNode {
 	 *
 	 * @param degree the degree of the new BTreeNode
 	 */
-	public AbstractBTreeNode(int degree) {
+	public AbstractBTreeNode(int degree, AbstractBTree bTree) {
 		this.degree = degree;
+		this.bTree = bTree;
 		//System.out.println("Constructor: " + children.hashCode());
+	}
+
+	public final AbstractBTree get_bTree(){
+		return this.bTree;
+	}
+
+	public final void set_bTree(AbstractBTree bTree){
+		this.bTree = bTree;
 	}
 
 	/**
