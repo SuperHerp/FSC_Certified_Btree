@@ -35,6 +35,9 @@ public class FSC{
                     //continue;
                     if(i == curPos.length - 1 ){
                         lastVisit = curPos[i].getParentFile().getPath();
+                        if(parents.size() == 0){
+                            break;
+                        }
                         curPos = parents.peek();
                         parents.pop();
                         i = lastItter.peek();
@@ -156,7 +159,7 @@ public class FSC{
 
         File[] entries2 = entries[1].listFiles();
          */
-        File[] entries = rootEntrys[0].listFiles()[13].listFiles()[5].listFiles()[35].listFiles()[11].listFiles();
+        File[] entries = rootEntrys[0].listFiles()[14].listFiles()[5].listFiles()[25].listFiles()[23].listFiles();
 
         FSC test0 = new FSC(entries);
         BTree bTree = new BTree(2);
@@ -164,7 +167,16 @@ public class FSC{
 
         System.out.println(bTree.toJson());
 
-        boolean test = bTree.hasKey("btree.txt");
+        boolean test = bTree.hasKey("A.txt");
+        boolean test1 = bTree.hasKey("B.txt");
+        boolean test2 = bTree.hasKey("C.txt");
+        boolean test3 = bTree.hasKey("D.txt");
+        boolean test4 = bTree.hasKey("E.txt");
+        boolean test5 = bTree.hasKey("F.txt");
+        boolean test6 = bTree.hasKey("G.txt");
+        boolean test7 = bTree.hasKey("H.txt");
+        boolean test8 = bTree.hasKey("I.txt");
+        boolean test9 = bTree.hasKey("J.txt");
 
 
         System.out.println("\n" + test);

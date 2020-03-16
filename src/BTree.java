@@ -32,11 +32,15 @@ public class BTree extends AbstractBTree {
             this.setRoot(new BTreeNode(this.getDegree(), this));
         }
 
+        /*
         if(this.getRoot().hasKey(key.name)){
             return;
         }else{
             this.getRoot().insert(key);
         }
+        */
+        this.getRoot().insert(key);
+
         return;
 
     }

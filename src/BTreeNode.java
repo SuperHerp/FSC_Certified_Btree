@@ -258,7 +258,7 @@ public class BTreeNode extends AbstractBTreeNode{
         ArrayList<AbstractBTreeNode> children;
 
         if(curNode.get_bTree().getRoot().hasKey(key.getName())){
-            return null;
+            //return null;
         }
 
         while (true) { //find leaf on wich to insert and create stack containing parents
@@ -268,13 +268,21 @@ public class BTreeNode extends AbstractBTreeNode{
                 int cmp = cmprtr.compare(curNode.getKeys().get(i), key);
                 //int cmp = curNode.getKeys().get(i).name.compareTo(key.name);
                 if(cmp == 0){
+                    curNode.getKeys().get(i).addPath(key.getFirstPath());
                     return null;
                     //return true;
+                }else if(cmp < 0){
+                    continue;
+                }else if(cmp > 0){
+                    break;
+                }
+
+                /*
                 }else if(cmp > 0){
                     continue;
                 }else if(cmp < 0){
                     break;
-                }
+                }*/
 
             }
 
