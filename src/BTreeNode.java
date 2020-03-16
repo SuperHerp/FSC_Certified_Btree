@@ -1,6 +1,9 @@
 import org.junit.Assert;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Stack;
@@ -492,6 +495,14 @@ public class BTreeNode extends AbstractBTreeNode{
                 }
             }
 
+        }
+        try {
+            BufferedWriter fileWriter = new BufferedWriter(new FileWriter(new File("out.json")));
+            fileWriter.write(json.toString());
+            fileWriter.flush();
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return json.toString();
     }

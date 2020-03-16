@@ -159,13 +159,15 @@ public class FSC{
 
         File[] entries2 = entries[1].listFiles();
          */
-        File[] entries = rootEntrys[0].listFiles()[14].listFiles()[5].listFiles()[25].listFiles()[23].listFiles();
+        File[] entries = rootEntrys[0].listFiles()[14].listFiles()[5].listFiles()[26].listFiles()[23].listFiles();
+        //File[] entries = rootEntrys[0].listFiles();
 
         FSC test0 = new FSC(entries);
         BTree bTree = new BTree(2);
         test0.crawl(bTree);
 
         System.out.println(bTree.toJson());
+
 
         boolean test = bTree.hasKey("A.txt");
         boolean test1 = bTree.hasKey("B.txt");
@@ -178,7 +180,9 @@ public class FSC{
         boolean test8 = bTree.hasKey("I.txt");
         boolean test9 = bTree.hasKey("J.txt");
 
-
+        /*
+        boolean test = bTree.hasKey("primes.sln");
+        */
         System.out.println("\n" + test);
         int debug = -1;
     }
