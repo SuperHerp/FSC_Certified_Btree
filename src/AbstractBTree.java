@@ -1,3 +1,5 @@
+import java.io.Serializable;
+
 /**
  * This class represents a B-tree of given {@link #degree} according to the following rules:
  * <ul>
@@ -19,7 +21,7 @@
  *
  * @see <a href="https://de.wikipedia.org/wiki/B-Baum">B-Tree (Wikipedia)</a>
  */
-public abstract class AbstractBTree {
+public abstract class AbstractBTree implements Serializable {
 	/**
 	 * The degree of this BTree. All nodes of this tree can store at most twice as many keys.
 	 * The {@link #root} must store at least one key, all other nodes must contain at least {@literal degree} keys.
@@ -99,4 +101,8 @@ public abstract class AbstractBTree {
 	 * @see <a href="https://de.wikipedia.org/wiki/JavaScript_Object_Notation">JavaScript Object Notation (JSON)</a>
 	 */
 	public abstract String toJson();
+
+	public abstract void toObjSer();
+
+	//public abstract void serObjToTree();
 }

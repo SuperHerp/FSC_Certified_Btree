@@ -51,6 +51,17 @@ public class BTree extends AbstractBTree {
         return curNode.toJson();
     }
 
+    public void toObjSer(){
+        AbstractBTreeNode curNode = this.getRoot();
+        curNode.toObjSer();
+    }
+
+
+    public static AbstractBTree serObjToTree() {
+        //AbstractBTreeNode curNode = this.getRoot();
+        return BTreeNode.serObjToTree();
+    }
+
     public static void main(String[] args) {
         int degree = 2;
 

@@ -1,4 +1,5 @@
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -7,7 +8,7 @@ import java.util.ArrayList;
  * @see AbstractBTree
  * @see <a href="https://de.wikipedia.org/wiki/B-Baum">B-Tree (Wikipedia)</a>
  */
-public abstract class AbstractBTreeNode {
+public abstract class AbstractBTreeNode implements Serializable {
 	/**
 	 * BTree containing this node
 	 */
@@ -200,4 +201,8 @@ public abstract class AbstractBTreeNode {
 	 * @see <a href="https://de.wikipedia.org/wiki/JavaScript_Object_Notation">JavaScript Object Notation (JSON)</a>
 	 */
 	public abstract String toJson();
+
+	public abstract void toObjSer();
+
+	//public abstract void serObjToTree();
 }

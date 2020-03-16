@@ -1,11 +1,5 @@
-import org.junit.Assert;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Stack;
 
 public class BTreeNode extends AbstractBTreeNode{
@@ -185,58 +179,6 @@ public class BTreeNode extends AbstractBTreeNode{
         return aL;
     }
 
-
-
-    /*
-    @Override
-    public ArrayList<FileContainer> sort(ArrayList<FileContainer> toSort) {
-        FileContainer cmp = new FileContainer("Comparator", "FileContainer=>compare()");
-        FileContainer swapA;
-        int indexA;
-        FileContainer swapB;
-        int indexB;
-        int arrSize = toSort.size();
-        if(arrSize <= 1){
-            return toSort;
-        }
-        for(int i = 0; i < arrSize; i++){
-            swapA = toSort.get(i);
-            for(int j = i+1; j < arrSize; j++){
-                swapB = toSort.get(j);
-
-                if(cmp.compare(swapA, swapB) == 0){
-                    return toSort;
-                }else if(cmp.compare(swapA, swapB) < 0){ // A < B
-                    indexA = toSort.indexOf(swapA);
-                    indexB = toSort.indexOf(swapB);
-
-                    if(indexA > indexB){
-                        toSort.remove(indexA);
-                        toSort.add(indexA, swapB);
-
-                        toSort.remove(indexB);
-                        toSort.add(indexB, swapA);
-                    }
-                }else if(cmp.compare(swapA, swapB) > 0){ // A > B
-                    indexA = toSort.indexOf(swapA);
-                    indexB = toSort.indexOf(swapB);
-
-                    if(indexA < indexB){
-                        toSort.remove(indexB);
-                        toSort.add(indexB, swapA);
-
-                        toSort.remove(indexA);
-                        toSort.add(indexA, swapB);
-                    }
-                }
-
-            }
-        }
-        return null;
-    }
-    */
-
-
     @Override
     public OverflowNode insert(FileContainer key) {
         //TODO
@@ -306,11 +248,6 @@ public class BTreeNode extends AbstractBTreeNode{
         keys.add(key);
         keys = curNode.quickSortAR(keys);
 
-
-        /*
-        curNode.getKeys().add(key);
-        curNode.getKeys().sort(Comparator.naturalOrder());
-        */
         if(curNode.getKeys().size() <= curNode.getDegree() * 2 ){ //no need to split
             return null;
         }
@@ -348,16 +285,6 @@ public class BTreeNode extends AbstractBTreeNode{
             children = curNode.getChildren();
             children.add(ovflRight);
             children = curNode.quickSortKids(children);
-
-            //keys = curNode.sort(keys);
-
-            /*
-            curNode.getKeys().add(key);
-            curNode.getKeys().sort(Comparator.naturalOrder());
-
-            int index = curNode.getKeys().indexOf(key);
-            curNode.getChildren().add(index+1, ovflRight);
-            */
 
             if(curNode.getKeys().size() > curNode.getDegree() * 2){
                 ovfl = curNode.split();
@@ -507,43 +434,41 @@ public class BTreeNode extends AbstractBTreeNode{
         return json.toString();
     }
 
+    public void toObjSer(){
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream("btree.FSC");
+            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
+            AbstractBTree tmp = this.get_bTree();
+            objectOutputStream.writeObject(tmp);
+            objectOutputStream.close();
+            fileOutputStream.close();
+        } catch (Throwable e) {
+            e.printStackTrace();
+            e.printStackTrace();
+        }
+
+    }
+
+    public static AbstractBTree serObjToTree(){
+        System.out.println("Starting reconstruction...");
+        long start = System.currentTimeMillis();
+        AbstractBTree bTree;
+        try{
+            FileInputStream fileInputStream = new FileInputStream("btree.FSC");
+            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
+            bTree = (AbstractBTree) objectInputStream.readObject();
+            objectInputStream.close();
+            fileInputStream.close();
+            System.out.println("Reconstruction took: " + (System.currentTimeMillis() - start)/1000 +" seconds." );
+            return bTree;
+        }catch (Throwable t){
+            t.printStackTrace();
+        }
+        int a = 0;
+        return null;
+    }
+
     public static void main(String[] args) {
 
-        String a = "AAA";
-        String b = "AAA";
-        int cmp = a.compareTo(b);
-
-        int degree = 2;
-/*
-        AbstractBTreeNode bTree0 = new BTreeNode(degree);
-
-        bTree0.insert(2);
-        bTree0.insert(8);
-        bTree0.insert(9);
-        bTree0.insert(17);
-
-        bTree0.insert(23);
-        bTree0.insert(21);
-        bTree0.insert(22);
-        bTree0.insert(24);
-
-        bTree0.insert(25);
-        bTree0.insert(30);
-        bTree0.insert(27);
-        bTree0.insert(10);
-
-        bTree0.insert(11);
-        bTree0.insert(12);
-        bTree0.insert(13);
-        bTree0.insert(14);
-
-        bTree0.insert(15);
-
-        String expected = "{keys:[15],children:[{keys:[9, 12],children:[{keys:[2,8]},{keys:[10,11]},{keys:[13,14]},]},{keys:[22,25],children:[{keys:[17,21]},{keys:[23,24]},{keys:[27,30]},]}]}";
-
-        Assert.assertEquals("unequal", expected, bTree0.toJson());
-
-*/
-        int debug = -1;
     }
 }

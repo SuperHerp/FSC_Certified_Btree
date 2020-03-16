@@ -1,8 +1,9 @@
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-public class FileContainer implements Comparator<FileContainer> {
+public class FileContainer implements Comparator<FileContainer>, Serializable {
 
     public String name;
     public ArrayList<String> path;
