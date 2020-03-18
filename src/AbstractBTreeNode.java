@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -31,6 +30,8 @@ public abstract class AbstractBTreeNode implements Serializable {
 	 * @see AbstractBTree
 	 */
 	private final ArrayList<AbstractBTreeNode> children = new ArrayList<>();
+
+	public AbstractBTreeNode parent;
 
 	/**
 	 * Creates a new BTreeNode with given {@link #degree}.
@@ -203,6 +204,10 @@ public abstract class AbstractBTreeNode implements Serializable {
 	public abstract String toJson();
 
 	public abstract void toObjSer();
+
+	public abstract void remove(FileContainer key);
+
+	public abstract AbstractBTreeNode fcWithKey(String key);
 
 	//public abstract void serObjToTree();
 }

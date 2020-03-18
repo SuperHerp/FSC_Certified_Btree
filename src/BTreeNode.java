@@ -1,10 +1,46 @@
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Stack;
+import java.util.zip.Deflater;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 public class BTreeNode extends AbstractBTreeNode{
     public BTreeNode(int degree, AbstractBTree bTree) {
         super(degree, bTree);
+    }
+
+    public AbstractBTreeNode fcWithKey(String key) {
+        AbstractBTreeNode curNode = this;
+        while(true) {
+            ArrayList<FileContainer> keys = curNode.getKeys();
+            int index = -1;
+            for(int i = 0; i < keys.size(); i++){
+                int cmp = key.compareTo(keys.get(i).getName());
+                //int cmp = keys.get(i).name.compareTo(key);
+                if(cmp == 0){
+                    return curNode;
+                }else if(cmp > 0){
+                    continue;
+                }else if(cmp < 0){
+                    index = i;
+                    break;
+                }
+            }
+            if(index == -1){
+                if(curNode.getChildren().size() != 0){
+                    index = curNode.getKeys().size();
+                    curNode = curNode.getChildren().get(index);
+                    continue;
+                }
+                return null;
+            }
+            if(index < curNode.getChildren().size()) {
+                curNode = curNode.getChildren().get(index);
+            }else {
+                return null;
+            }
+        }
     }
 
     @Override
@@ -181,7 +217,6 @@ public class BTreeNode extends AbstractBTreeNode{
 
     @Override
     public OverflowNode insert(FileContainer key) {
-        //TODO
         /**
          * find leaf in wich the key should be added(remember last parent ALWAYS)
          * add key to keyList
@@ -222,13 +257,6 @@ public class BTreeNode extends AbstractBTreeNode{
                     break;
                 }
 
-                /*
-                }else if(cmp > 0){
-                    continue;
-                }else if(cmp < 0){
-                    break;
-                }*/
-
             }
 
             if(curNode.getChildren().size() == 0){
@@ -240,6 +268,7 @@ public class BTreeNode extends AbstractBTreeNode{
             } else {
                 parents.push(curNode);
                 curNode = curNode.getChildren().get(i);
+                curNode.parent = parents.peek();
                 continue;
             }
         }
@@ -266,7 +295,10 @@ public class BTreeNode extends AbstractBTreeNode{
 
                 newRoot.addKey(ovfl.getKey());
                 newRoot.addChild(curNode);
+                curNode.parent = newRoot;
+                ovfl.getRightChild().parent = newRoot;
                 newRoot.addChild(ovfl.getRightChild());
+
 
                 curNode.get_bTree().setRoot(newRoot);
 
@@ -277,6 +309,7 @@ public class BTreeNode extends AbstractBTreeNode{
 
             key = ovfl.getKey();
             AbstractBTreeNode ovflRight = ovfl.getRightChild();
+            ovflRight.parent = curNode;
 
             keys = curNode.getKeys();
             keys.add(key);
@@ -326,7 +359,6 @@ public class BTreeNode extends AbstractBTreeNode{
         curNode.getKeys().remove(j-1);
 
         return ovfl;
-
     }
 
     // { [9,22],[{[2,8]},{[17,21]},{[23,24,25]}] }
@@ -435,13 +467,22 @@ public class BTreeNode extends AbstractBTreeNode{
     }
 
     public void toObjSer(){
+        AbstractBTree bTree = this.get_bTree();
+        Deflater defl = new Deflater(Deflater.BEST_COMPRESSION);
         try {
-            FileOutputStream fileOutputStream = new FileOutputStream("btree.FSC");
-            ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-            AbstractBTree tmp = this.get_bTree();
-            objectOutputStream.writeObject(tmp);
-            objectOutputStream.close();
-            fileOutputStream.close();
+            System.out.println("Saving tree...");
+            long start = System.currentTimeMillis();
+
+            FileOutputStream fiOut = new FileOutputStream("bTree.FSC");
+            DeflaterOutputStream defOut = new DeflaterOutputStream(fiOut, defl);
+            ObjectOutputStream objOut = new ObjectOutputStream(defOut);
+            objOut.writeObject(bTree);
+            objOut.close();
+            defOut.close();
+            fiOut.close();
+
+            long time = (System.currentTimeMillis() - start)/1000;
+            System.out.println("Saving took: " + time + "seconds.");
         } catch (Throwable e) {
             e.printStackTrace();
             e.printStackTrace();
@@ -449,18 +490,49 @@ public class BTreeNode extends AbstractBTreeNode{
 
     }
 
+    @Override
+    public void remove(FileContainer key) {
+        AbstractBTreeNode rootNode = this;
+        AbstractBTreeNode nodeWithKey = rootNode.fcWithKey(key.getName());
+        FileContainer fc2del = null;
+
+        int i;
+        for(i = 0; i < nodeWithKey.getKeys().size(); i++){
+            if(nodeWithKey.getKeys().get(i).getName().compareTo(key.getName()) == 0){
+                fc2del = nodeWithKey.getKeys().get(i);
+                break;
+            }
+        }
+        if(fc2del == null){
+            return;
+        }else{
+            if(fc2del.path.size() <= 1){
+                //Node/FC has to be deleted
+            }else{
+                //Only path has to be removed
+                fc2del.path.remove(fc2del.path.indexOf(key.getFirstPath()));
+                return;
+            }
+        }
+    }
+
     public static AbstractBTree serObjToTree(){
         System.out.println("Starting reconstruction...");
         long start = System.currentTimeMillis();
         AbstractBTree bTree;
         try{
-            FileInputStream fileInputStream = new FileInputStream("btree.FSC");
-            ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream);
-            bTree = (AbstractBTree) objectInputStream.readObject();
-            objectInputStream.close();
-            fileInputStream.close();
-            System.out.println("Reconstruction took: " + (System.currentTimeMillis() - start)/1000 +" seconds." );
+            FileInputStream fIn = new FileInputStream("bTree.FSC");
+            InflaterInputStream infIn = new InflaterInputStream(fIn);
+            ObjectInputStream objIn = new ObjectInputStream(infIn);
+            bTree = (AbstractBTree) objIn.readObject();
+            objIn.close();
+            infIn.close();
+            fIn.close();
+            long time = (System.currentTimeMillis() - start)/1000;
+            System.out.println("Reconstruction took: " + time +" seconds." );
+
             return bTree;
+
         }catch (Throwable t){
             t.printStackTrace();
         }

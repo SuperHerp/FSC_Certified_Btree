@@ -1,4 +1,3 @@
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -33,17 +32,7 @@ public class FileContainer implements Comparator<FileContainer>, Serializable {
         }else if(o1.name.compareTo(o2.name) > 0){
             return 1;
         }else if(o1.name.compareTo(o2.name) == 0){
-
             return 0;
-            /*
-            if(o1.path.compareTo(o2.path) < 0){
-                return -1;
-            }else if(o1.name.compareTo(o2.name) < 0){
-                return 1;
-            }else {
-                return 0;
-            }
-            */
         }
         return 0;
     }

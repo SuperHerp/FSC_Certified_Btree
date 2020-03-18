@@ -1,5 +1,3 @@
-import com.sun.org.apache.xml.internal.utils.StringComparable;
-
 import java.io.File;
 import java.util.Stack;
 
@@ -21,9 +19,6 @@ public class FSC{
         System.out.println("Start crawling fs...");
         while(true){
             //System.out.println("Current directory: " + curPos[i].getPath());
-            if(curPos[i].toString() == "C:\\Users\\simon\\IdeaProjects\\FSC_Certified_Btree\\src\\FSC.java"){
-                int debug= 0;
-            }
             if(i == this.root.length-1 && parents.size() == 0 && lastItter.size() == 0){
                 if(curPos[i].isFile()){
                     String fileName = curPos[i].getName();
@@ -155,14 +150,14 @@ public class FSC{
     public static void main(String[] args) {
 
 
-        File[] entries = File.listRoots();
-
+        //File[] entries = File.listRoots()[0].listFiles()[13].listFiles();
+        //File[] entries = File.listRoots();
+        File[] entries = File.listRoots()[0].listFiles()[14].listFiles()[5].listFiles()[26].listFiles()[23].listFiles();
         FSC test0 = new FSC(entries);
-        BTree bTree = new BTree(9);
+        BTree bTree = new BTree(1);
         test0.crawl(bTree);
 
         bTree.toObjSer();
-        AbstractBTree btree1 = new BTree(2);
         AbstractBTree testTree = BTree.serObjToTree();
 
         //System.out.println(bTree.toJson());
@@ -173,11 +168,13 @@ public class FSC{
         boolean test2 = testTree.hasKey("C.txt");
         boolean test3 = testTree.hasKey("D.txt");
         boolean test4 = testTree.hasKey("E.txt");
-        boolean test5 = testTree.hasKey("F.txt");
-        boolean test6 = testTree.hasKey("G.txt");
-        boolean test7 = testTree.hasKey("H.txt");
-        boolean test8 = testTree.hasKey("I.txt");
-        boolean test9 = testTree.hasKey("J.txt");
+        boolean test5 = testTree.hasKey("Arch.exe");
+        boolean test6 = testTree.hasKey("World of Warcraft Launcher.exe");
+        boolean test7 = testTree.hasKey("Am Arsch!.mp3");
+        boolean test8 = testTree.hasKey("cemu_1.15.1.rar");
+        boolean test9 = testTree.hasKey("GOPR0603.JPG");
+
+        //FileContainer test10 = testTree.FCwithKey("A.txt");
 
         System.out.println(test00);
         System.out.println(test1);
@@ -189,6 +186,8 @@ public class FSC{
         System.out.println(test7);
         System.out.println(test8);
         System.out.println(test9);
+
+        testTree.remove(new FileContainer("A.txt", "C:\\Users\\simon\\Desktop\\FSC TestDir\\A.txt"));
 
 
         //System.out.println("\n" + test);

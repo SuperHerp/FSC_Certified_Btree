@@ -102,7 +102,12 @@ public abstract class AbstractBTree implements Serializable {
 	 */
 	public abstract String toJson();
 
+
+	public abstract void remove(FileContainer key);
+
 	public abstract void toObjSer();
+
+	public abstract AbstractBTreeNode fcWithKey(String key);
 
 	//public abstract void serObjToTree();
 }

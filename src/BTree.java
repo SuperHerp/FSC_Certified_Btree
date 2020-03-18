@@ -1,16 +1,3 @@
-import junit.framework.JUnit4TestAdapter;
-import org.junit.Assert;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Random;
-import java.util.Stack;
-
 public class BTree extends AbstractBTree {
     public BTree(int degree) {
         super(degree);
@@ -27,22 +14,11 @@ public class BTree extends AbstractBTree {
 
     @Override
     public void insert(FileContainer key) {
-        //TODO
         if(this.getRoot() == null){
             this.setRoot(new BTreeNode(this.getDegree(), this));
         }
-
-        /*
-        if(this.getRoot().hasKey(key.name)){
-            return;
-        }else{
-            this.getRoot().insert(key);
-        }
-        */
         this.getRoot().insert(key);
-
         return;
-
     }
 
     @Override
@@ -51,9 +27,19 @@ public class BTree extends AbstractBTree {
         return curNode.toJson();
     }
 
+    @Override
+    public void remove(FileContainer key) {
+        this.getRoot().remove(key);
+    }
+
     public void toObjSer(){
         AbstractBTreeNode curNode = this.getRoot();
         curNode.toObjSer();
+    }
+
+    @Override
+    public AbstractBTreeNode fcWithKey(String key) {
+        return this.getRoot().fcWithKey(key);
     }
 
 
