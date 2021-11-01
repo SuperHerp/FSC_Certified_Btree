@@ -510,7 +510,10 @@ public class BTreeNode extends AbstractBTreeNode{
                 //Node/FC has to be deleted
             }else{
                 //Only path has to be removed
-                fc2del.path.remove(fc2del.path.indexOf(key.getFirstPath()));
+                int indx2rm = fc2del.path.indexOf(key.getFirstPath());
+                if(indx2rm != -1){
+                    fc2del.path.remove(fc2del.path.indexOf(key.getFirstPath()));
+                }
                 return;
             }
         }

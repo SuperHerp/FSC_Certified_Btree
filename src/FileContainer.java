@@ -13,6 +13,10 @@ public class FileContainer implements Comparator<FileContainer>, Serializable {
         this.path.add(path);
     }
 
+    public ArrayList<String> getPaths(){
+        return this.path;
+    }
+
     public String getFirstPath() {
         return path.get(0);
     }

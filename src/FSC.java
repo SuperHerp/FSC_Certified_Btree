@@ -1,11 +1,18 @@
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.Stack;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FSC{
     File[] root;
+    StringBuilder fileNames;
+
 
     public FSC(File[] root){
         this.root = root;
+        this.fileNames = new StringBuilder();
     }
 
     public void crawl(BTree bTree){
@@ -22,6 +29,9 @@ public class FSC{
             if(i == this.root.length-1 && parents.size() == 0 && lastItter.size() == 0){
                 if(curPos[i].isFile()){
                     String fileName = curPos[i].getName();
+                    if(this.fileNames.indexOf(fileName) != -1){
+                        fileNames.append(fileName + ";");
+                    }
                     FileContainer add = new FileContainer(fileName, curPos[i].getPath());
                     bTree.insert(add);
                     //System.out.println("adding: " + fileName);
@@ -84,9 +94,13 @@ public class FSC{
             }
         //for(int i = 0; i < curPos.length; i++){
             if(curPos[i].isFile()){
-                FileContainer add = new FileContainer(curPos[i].getName(), curPos[i].getPath());
-                bTree.insert(add);
                 String fileName = curPos[i].getName();
+                FileContainer add = new FileContainer(fileName, curPos[i].getPath());
+                if(this.fileNames.indexOf(fileName) != -1){
+                    fileNames.append(fileName + ";");
+                }
+                bTree.insert(add);
+                // String fileName = curPos[i].getName();
                 //System.out.println("adding: " + fileName);
 
                 //add FC to tree
@@ -149,49 +163,73 @@ public class FSC{
 
     public static void main(String[] args) {
 
-
-        //File[] entries = File.listRoots()[0].listFiles()[13].listFiles();
-        //File[] entries = File.listRoots();
-        File[] entries = File.listRoots()[0].listFiles()[14].listFiles()[5].listFiles()[26].listFiles()[23].listFiles();
-        FSC test0 = new FSC(entries);
-        BTree bTree = new BTree(1);
-        test0.crawl(bTree);
-
-        bTree.toObjSer();
         AbstractBTree testTree = BTree.serObjToTree();
+        Pattern pat;
+        Matcher mat;
 
-        //System.out.println(bTree.toJson());
+        while(true){
 
+            // Scanner in = new Scanner(System.in);
+            System.out.println("Enter search term: ");
+            // String toFind = in.toString();
+            String toFind = System.console().readLine();
+            // in.close();
+            boolean foundQ = testTree.hasKey(toFind);
+            System.out.println("Search for '" + toFind + "' returned: " + foundQ);
 
-        boolean test00 = testTree.hasKey("A.txt");
-        boolean test1 = testTree.hasKey("B.txt");
-        boolean test2 = testTree.hasKey("C.txt");
-        boolean test3 = testTree.hasKey("D.txt");
-        boolean test4 = testTree.hasKey("E.txt");
-        boolean test5 = testTree.hasKey("Arch.exe");
-        boolean test6 = testTree.hasKey("World of Warcraft Launcher.exe");
-        boolean test7 = testTree.hasKey("Am Arsch!.mp3");
-        boolean test8 = testTree.hasKey("cemu_1.15.1.rar");
-        boolean test9 = testTree.hasKey("GOPR0603.JPG");
+            // testTree.remove(new FileContainer("A.txt", "E:\\Desktop\\FSC TestDir\\A\\A.txt"));
 
-        //FileContainer test10 = testTree.FCwithKey("A.txt");
+            if(foundQ){
+                ArrayList<FileContainer> keys01 = testTree.fcWithKey(toFind).getKeys();
+                for(int i = 0; i < keys01.size(); i++){
+                    if(keys01.get(i).name.equals(toFind)){
+                        ArrayList<String> paths01 = testTree.fcWithKey(toFind).getKeys().get(i).getPaths();
+                        for(int k = 0; k < paths01.size(); k++){
+                            System.out.println(k + ". Path: " + paths01.get(k));
+                        }
+                        break;
+                    }
+                }
+            }
+        }
 
-        System.out.println(test00);
-        System.out.println(test1);
-        System.out.println(test2);
-        System.out.println(test3);
-        System.out.println(test4);
-        System.out.println(test5);
-        System.out.println(test6);
-        System.out.println(test7);
-        System.out.println(test8);
-        System.out.println(test9);
+        //  //File[] entries = File.listRoots()[0].listFiles()[13].listFiles();
+        // // File[] entries = File.listRoots()[5].listFiles();
+        // File[] entries = File.listRoots();
+        // //  File[] entries = File.listRoots()[2].listFiles()[8].listFiles()[60].listFiles();
+        // FSC test0 = new FSC(entries);
+        // BTree bTree = new BTree(3);
+        // test0.crawl(bTree);
+        // bTree.toObjSer();
+        // AbstractBTree testTree = BTree.serObjToTree();
+        // //System.out.println(bTree.toJson());
+        // boolean test00 = testTree.hasKey("A.txt");
+        // boolean test1 = testTree.hasKey("B.txt");
+        // boolean test2 = testTree.hasKey("C.txt");
+        // boolean test3 = testTree.hasKey("D.txt");
+        // boolean test4 = testTree.hasKey("E.txt");
+        // boolean test5 = testTree.hasKey("Arch.exe");
+        // boolean test6 = testTree.hasKey("World of Warcraft Launcher.exe");
+        // boolean test7 = testTree.hasKey("Am Arsch!.mp3");
+        // boolean test8 = testTree.hasKey("cemu_1.15.1.rar");
+        // boolean test9 = testTree.hasKey("GOPR0603.JPG");
+        // boolean test10 = testTree.hasKey("Loki_S01E01_Glorious Purpose.mp4");
+        // //FileContainer test10 = testTree.FCwithKey("A.txt");
+        // System.out.println("test00:" + test00);
+        // System.out.println("test01:" + test1);
+        // System.out.println("test02:" +test2);
+        // System.out.println("test03:" +test3);
+        // System.out.println("test04:" +test4);
+        // System.out.println("test05:" +test5);
+        // System.out.println("test06:" +test6);
+        // System.out.println("test07:" +test7);
+        // System.out.println("test08:" +test8);
+        // System.out.println("test09:" +test9);
+        // System.out.println("test10:" +test10);
 
-        testTree.remove(new FileContainer("A.txt", "C:\\Users\\simon\\Desktop\\FSC TestDir\\A.txt"));
-
-
-        //System.out.println("\n" + test);
-        int debug = -1;
+        //  testTree.remove(new FileContainer("A.txt", "C:\\Users\\simon\\Desktop\\FSC TestDir\\A.txt"));
+ //         //System.out.println("\n" + test);
+ //         int debug = -1;
 
 
     }

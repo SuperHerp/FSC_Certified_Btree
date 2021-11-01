@@ -1,0 +1,40 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {},
+	"launch": {
+		"version": "0.2.0",
+		"configurations": [
+			{
+				"type": "java",
+				"name": "Launch Current File",
+				"request": "launch",
+				"mainClass": "${file}"
+			},
+			{
+				"type": "java",
+				"name": "Launch BTree",
+				"request": "launch",
+				"mainClass": "BTree",
+				"projectName": "FSC_Certified_Btree_d26b2f4"
+			},
+			{
+				"type": "java",
+				"name": "Launch BTreeNode",
+				"request": "launch",
+				"mainClass": "BTreeNode",
+				"projectName": "FSC_Certified_Btree_d26b2f4"
+			},
+			{
+				"type": "java",
+				"name": "Launch FSC",
+				"request": "launch",
+				"mainClass": "FSC",
+				"projectName": "FSC_Certified_Btree_d26b2f4"
+			}
+		]
+	}
+}
