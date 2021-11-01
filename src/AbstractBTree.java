@@ -32,6 +32,8 @@ public abstract class AbstractBTree implements Serializable {
 	 */
 	private AbstractBTreeNode root;
 
+	private String fileNames;
+
 	/**
 	 * Creates a new BTree with given {@link #degree}.
 	 *
@@ -101,6 +103,14 @@ public abstract class AbstractBTree implements Serializable {
 	 * @see <a href="https://de.wikipedia.org/wiki/JavaScript_Object_Notation">JavaScript Object Notation (JSON)</a>
 	 */
 	public abstract String toJson();
+
+	public void setFileNames(String fileNames){
+		this.fileNames = fileNames;
+	}
+	
+	public String getFileNames(){
+		return this.fileNames;
+	}
 
 
 	public abstract void remove(FileContainer key);

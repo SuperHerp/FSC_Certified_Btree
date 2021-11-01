@@ -24,6 +24,14 @@ public abstract class AbstractBTreeNode implements Serializable {
 	 * @see AbstractBTree
 	 */
 	private final ArrayList<FileContainer> keys = new ArrayList<>();
+
+	/**
+	 * A string containing all the filenames
+	 *
+	 * @see AbstractBTree
+	 */
+	private String fileNames;
+
 	/**
 	 * The list of children (subtrees) of this node.
 	 *
@@ -50,6 +58,14 @@ public abstract class AbstractBTreeNode implements Serializable {
 
 	public final void set_bTree(AbstractBTree bTree){
 		this.bTree = bTree;
+	}
+
+	public void setFileNames(String fileNames){
+		this.fileNames = fileNames;
+	}
+
+	public String getFileNames(){
+		return this.fileNames;
 	}
 
 	/**
