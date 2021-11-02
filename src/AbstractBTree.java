@@ -32,7 +32,7 @@ public abstract class AbstractBTree implements Serializable {
 	 */
 	private AbstractBTreeNode root;
 
-	private String fileNames;
+	private String[] fileNames;
 
 	/**
 	 * Creates a new BTree with given {@link #degree}.
@@ -104,11 +104,11 @@ public abstract class AbstractBTree implements Serializable {
 	 */
 	public abstract String toJson();
 
-	public void setFileNames(String fileNames){
+	public void setFileNames(String[] fileNames){
 		this.fileNames = fileNames;
 	}
 	
-	public String getFileNames(){
+	public String[] getFileNames(){
 		return this.fileNames;
 	}
 

@@ -198,113 +198,145 @@ public class FSC{
     public static void main(String[] args) {
         //hihi
 
-        AbstractBTree testTree = BTree.serObjToTree();
-        Pattern pat;
-        Matcher mat;
+        // AbstractBTree testTree = BTree.serObjToTree();
+        // Pattern pat;
+        // Matcher mat;
 
-        while(true){
-            System.out.println("---------------------------------------------------------------------------------------------");
-            System.out.println("---------------------------------------------------------------------------------------------");
-            System.out.println("Search-atrributes:");
-            System.out.println("    0.: ''          -> search for strings containing input (e.g: input 'hello' => every file containing 'hello' in its name (daksjhhelloaskjdla.ext gets matched!))");
-            System.out.println("    1.: 'ext:'      -> search for extension (e.g: ext:exe => lists all files with '.exe' as extension)");
-            System.out.println("    2.: 'direct:'   -> search for this literaly (whole word match -> e.g: direct:ascii.inc => looks for ascii.inc)");
+        // while(true){
+        //     System.out.println("---------------------------------------------------------------------------------------------");
+        //     System.out.println("---------------------------------------------------------------------------------------------");
+        //     System.out.println("Search-atrributes:");
+        //     System.out.println("    0.: ''          -> search for strings containing input (e.g: input 'hello' => every file containing 'hello' in its name (daksjhhelloaskjdla.ext gets matched!))");
+        //     System.out.println("    1.: 'ext:'      -> search for extension (e.g: ext:exe => lists all files with '.exe' as extension)");
+        //     System.out.println("    2.: 'direct:'   -> search for this literaly (whole word match -> e.g: direct:ascii.inc => looks for ascii.inc)");
 
-            // Scanner in = new Scanner(System.in);
-            System.out.println("Enter search term: ");
-            // String toFind = in.toString();
+        //     // Scanner in = new Scanner(System.in);
+        //     System.out.println("Enter search term: ");
+        //     // String toFind = in.toString();
 
-            String inFromCLI = System.console().readLine();
-            String regPat;
+        //     String inFromCLI = System.console().readLine();
+        //     String regPat;
 
-            if(inFromCLI.contains("direct:")){
-                inFromCLI = inFromCLI.replace("direct:", "");
+        //     if(inFromCLI.contains("direct:")){
+        //         inFromCLI = inFromCLI.replace("direct:", "");
 
-                regPat = inFromCLI;
-                System.out.println("regpat: " + regPat);
+        //         regPat = inFromCLI;
+        //         System.out.println("regpat: " + regPat);
 
-            }else if(inFromCLI.contains("ext:")){
-                inFromCLI = inFromCLI.replace("ext:", "");
+        //     }else if(inFromCLI.contains("ext:")){
+        //         inFromCLI = inFromCLI.replace("ext:", "");
 
-                regPat = "([^;]*\\w+." + inFromCLI + ")";
-                System.out.println("regpat: " + regPat);
-            }else{
-                regPat = "[^;]*(" + inFromCLI + ")[^;]+";
-                System.out.println("regpat: " + regPat);
-            }
+        //         regPat = "([^;]*\\w+." + inFromCLI + ")";
+        //         System.out.println("regpat: " + regPat);
+        //     }else{
+        //         regPat = "[^;]*(" + inFromCLI + ")[^;]+";
+        //         System.out.println("regpat: " + regPat);
+        //     }
 
 
-            pat = Pattern.compile(regPat, Pattern.CASE_INSENSITIVE);
-            mat = pat.matcher(testTree.getFileNames());
+        //     pat = Pattern.compile(regPat, Pattern.CASE_INSENSITIVE);
+        //     mat = pat.matcher(testTree.getFileNames());
             
-            String[] matches = mat.results().map(MatchResult::group).toArray(String[]::new);
-            Arrays.sort(matches);
-            // String toFind = System.console().readLine();
-            // in.close();
+        //     String[] matches = mat.results().map(MatchResult::group).toArray(String[]::new);
+        //     Arrays.sort(matches);
+        //     // String toFind = System.console().readLine();
+        //     // in.close();
 
-            String toFind;
-            int h = 0;
-            for(int j = 0; j < matches.length; j++){
+        //     String toFind;
+        //     int h = 0;
+        //     for(int j = 0; j < matches.length; j++){
 
-                // toFind = matches[j].substring(0, matches[j].length() - 1);
-                toFind = matches[j];
-                // System.out.println(toFind);
-                boolean foundQ = testTree.hasKey(toFind);
-                // System.out.println("Search for '" + toFind + "' returned: " + foundQ);
+        //         // toFind = matches[j].substring(0, matches[j].length() - 1);
+        //         toFind = matches[j];
+        //         // System.out.println(toFind);
+        //         boolean foundQ = testTree.hasKey(toFind);
+        //         // System.out.println("Search for '" + toFind + "' returned: " + foundQ);
     
-                // testTree.remove(new FileContainer("A.txt", "E:\\Desktop\\FSC TestDir\\A\\A.txt"));
+        //         // testTree.remove(new FileContainer("A.txt", "E:\\Desktop\\FSC TestDir\\A\\A.txt"));
     
-                if(foundQ){
-                    ArrayList<FileContainer> keys01 = testTree.fcWithKey(toFind).getKeys();
-                    for(int i = 0; i < keys01.size(); i++){
-                        if(keys01.get(i).name.equals(toFind)){
-                            ArrayList<String> paths01 = testTree.fcWithKey(toFind).getKeys().get(i).getPaths();
-                            for(int k = 0; k < paths01.size(); k++){
-                                System.out.println(h + ". Path: " + paths01.get(k));
-                                h++;
-                            }
-                            break;
-                        }
-                    }
-                }
-            }
+        //         if(foundQ){
+        //             ArrayList<FileContainer> keys01 = testTree.fcWithKey(toFind).getKeys();
+        //             for(int i = 0; i < keys01.size(); i++){
+        //                 if(keys01.get(i).name.equals(toFind)){
+        //                     ArrayList<String> paths01 = testTree.fcWithKey(toFind).getKeys().get(i).getPaths();
+        //                     for(int k = 0; k < paths01.size(); k++){
+        //                         System.out.println(h + ". Path: " + paths01.get(k));
+        //                         h++;
+        //                     }
+        //                     break;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+
+        //File[] entries = File.listRoots()[0].listFiles()[13].listFiles();
+        File[] entries = File.listRoots()[0].listFiles();
+        // File[] entries = File.listRoots();
+        //  File[] entries = File.listRoots()[2].listFiles()[8].listFiles()[60].listFiles();
+        FSC test0 = new FSC(entries);
+        BTree bTree = new BTree(3);
+        test0.crawl(bTree);
+
+        String fileNameSuperString = test0.fileNames.toString();
+        StringBuilder[] toAdd = new StringBuilder[4];
+        String tmp;
+
+        for(int i = 0; i < 4; i++){
+            toAdd[i] = new StringBuilder();
         }
 
-        //  //File[] entries = File.listRoots()[0].listFiles()[13].listFiles();
-        // File[] entries = File.listRoots()[0].listFiles();
-        // // File[] entries = File.listRoots();
-        // //  File[] entries = File.listRoots()[2].listFiles()[8].listFiles()[60].listFiles();
-        // FSC test0 = new FSC(entries);
-        // BTree bTree = new BTree(3);
-        // test0.crawl(bTree);
-        // // System.out.println("filenames:" + test0.fileNames);
-        // bTree.setFileNames(test0.fileNames.toString());
-        // bTree.toObjSer();
-        // AbstractBTree testTree = BTree.serObjToTree();
-        // //System.out.println(bTree.toJson());
-        // boolean test00 = testTree.hasKey("A.txt");
-        // boolean test1 = testTree.hasKey("B.txt");
-        // boolean test2 = testTree.hasKey("C.txt");
-        // boolean test3 = testTree.hasKey("D.txt");
-        // boolean test4 = testTree.hasKey("E.txt");
-        // boolean test5 = testTree.hasKey("Arch.exe");
-        // boolean test6 = testTree.hasKey("World of Warcraft Launcher.exe");
-        // boolean test7 = testTree.hasKey("Am Arsch!.mp3");
-        // boolean test8 = testTree.hasKey("cemu_1.15.1.rar");
-        // boolean test9 = testTree.hasKey("GOPR0603.JPG");
-        // boolean test10 = testTree.hasKey("Loki_S01E01_Glorious Purpose.mp4");
-        // //FileContainer test10 = testTree.FCwithKey("A.txt");
-        // System.out.println("test00:" + test00);
-        // System.out.println("test01:" + test1);
-        // System.out.println("test02:" +test2);
-        // System.out.println("test03:" +test3);
-        // System.out.println("test04:" +test4);
-        // System.out.println("test05:" +test5);
-        // System.out.println("test06:" +test6);
-        // System.out.println("test07:" +test7);
-        // System.out.println("test08:" +test8);
-        // System.out.println("test09:" +test9);
-        // System.out.println("test10:" +test10);
+        int idx = 0;
+        int idy = 0;
+        int idz = 0;
+        while(idx < fileNameSuperString.length()){
+            idx++;
+            while(fileNameSuperString.charAt(idx) != ';'){
+                
+                idx++;
+            }
+            fileNameSuperString.substring(idy, idx);
+            toAdd[idz].append(fileNameSuperString.substring(idy, idx));
+            idz = (idz+1 == 4)?(0):(idz+1);
+            idy = idx+1;
+
+        }
+
+        String[] fuckMe = new String[4];
+        fuckMe[0] = toAdd[0].toString();
+        fuckMe[1] = toAdd[1].toString();
+        fuckMe[2] = toAdd[2].toString();
+        fuckMe[3] = toAdd[3].toString();
+
+
+        // System.out.println("filenames:" + test0.fileNames);
+        bTree.setFileNames(fuckMe);
+        bTree.toObjSer();
+        AbstractBTree testTree = BTree.serObjToTree();
+        //System.out.println(bTree.toJson());
+        boolean test00 = testTree.hasKey("A.txt");
+        boolean test1 = testTree.hasKey("B.txt");
+        boolean test2 = testTree.hasKey("C.txt");
+        boolean test3 = testTree.hasKey("D.txt");
+        boolean test4 = testTree.hasKey("E.txt");
+        boolean test5 = testTree.hasKey("Arch.exe");
+        boolean test6 = testTree.hasKey("World of Warcraft Launcher.exe");
+        boolean test7 = testTree.hasKey("Am Arsch!.mp3");
+        boolean test8 = testTree.hasKey("cemu_1.15.1.rar");
+        boolean test9 = testTree.hasKey("GOPR0603.JPG");
+        boolean test10 = testTree.hasKey("Loki_S01E01_Glorious Purpose.mp4");
+        //FileContainer test10 = testTree.FCwithKey("A.txt");
+        System.out.println("test00:" + test00);
+        System.out.println("test01:" + test1);
+        System.out.println("test02:" +test2);
+        System.out.println("test03:" +test3);
+        System.out.println("test04:" +test4);
+        System.out.println("test05:" +test5);
+        System.out.println("test06:" +test6);
+        System.out.println("test07:" +test7);
+        System.out.println("test08:" +test8);
+        System.out.println("test09:" +test9);
+        System.out.println("test10:" +test10);
         
 
 

@@ -30,7 +30,7 @@ public abstract class AbstractBTreeNode implements Serializable {
 	 *
 	 * @see AbstractBTree
 	 */
-	private String fileNames;
+	private String[] fileNames;
 
 	/**
 	 * The list of children (subtrees) of this node.
@@ -60,11 +60,11 @@ public abstract class AbstractBTreeNode implements Serializable {
 		this.bTree = bTree;
 	}
 
-	public void setFileNames(String fileNames){
+	public void setFileNames(String[] fileNames){
 		this.fileNames = fileNames;
 	}
 
-	public String getFileNames(){
+	public String[] getFileNames(){
 		return this.fileNames;
 	}
 
