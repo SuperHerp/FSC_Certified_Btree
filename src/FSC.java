@@ -1,4 +1,5 @@
 import java.io.File;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Stack;
@@ -26,7 +27,7 @@ public class FSC{
 
         System.out.println("Start crawling fs...");
         while(true){
-            //System.out.println("Current directory: " + curPos[i].getPath());
+            // System.out.println("Current directory: " + curPos[i].getPath());
             if(i == this.root.length-1 && parents.size() == 0 && lastItter.size() == 0){
                 if(curPos[i].isFile()){
                     String fileName = curPos[i].getName();
@@ -164,6 +165,36 @@ public class FSC{
 
     }
 
+    // public String[] sortMatches(String[] matches){
+    //     // String[] sortedMat = new String[matches.length];
+    //     String carry;
+    //     int j;
+    //     boolean changedQ = false;
+    //     while(!changedQ){
+    //         changedQ = false;
+    //         for(int i = 0; i < matches.length; i++){
+    //             j = i+1;
+    //             int cmp2 = matches[i].compareTo(matches[j]);
+    //             //matches[i] > matches[j] --> cmp > 0
+    //             if(cmp2 > 0){
+    //                 carry = matches[j];
+    //                 matches[j] = matches[i];
+    //                 matches[i] = carry;
+    //                 changedQ = true;
+    //             }else{
+    //                 if(cmp2 < 0){
+    //                     //do nothing
+    //                 }else{
+    //                     //cmp2 == 0 -> ?
+    //                     System.out.println("error -> encountered same filename 2 times");
+    //                 }
+    //             }
+    //         }
+
+    //     }
+    //     return matches;
+    // }
+
     public static void main(String[] args) {
 
         AbstractBTree testTree = BTree.serObjToTree();
@@ -171,23 +202,47 @@ public class FSC{
         Matcher mat;
 
         while(true){
+            System.out.println("---------------------------------------------------------------------------------------------");
+            System.out.println("---------------------------------------------------------------------------------------------");
+            System.out.println("Search-atrributes:");
+            System.out.println("    0.: ''          -> search for strings containing input (e.g: input 'hello' => every file containing 'hello' in its name (daksjhhelloaskjdla.ext gets matched!))");
+            System.out.println("    1.: 'ext:'      -> search for extension (e.g: ext:exe => lists all files with '.exe' as extension)");
+            System.out.println("    2.: 'direct:'   -> search for this literaly (whole word match -> e.g: direct:ascii.inc => looks for ascii.inc)");
 
             // Scanner in = new Scanner(System.in);
             System.out.println("Enter search term: ");
             // String toFind = in.toString();
-            String regPat = "[^;]*(" + System.console().readLine() + ")[^;]+";
-            System.out.println("regpat: " + regPat);
+
+            String inFromCLI = System.console().readLine();
+            String regPat;
+
+            if(inFromCLI.contains("direct:")){
+                inFromCLI = inFromCLI.replace("direct:", "");
+
+                regPat = inFromCLI;
+                System.out.println("regpat: " + regPat);
+
+            }else if(inFromCLI.contains("ext:")){
+                inFromCLI = inFromCLI.replace("ext:", "");
+
+                regPat = "([^;]*\\w+." + inFromCLI + ")";
+                System.out.println("regpat: " + regPat);
+            }else{
+                regPat = "[^;]*(" + inFromCLI + ")[^;]+";
+                System.out.println("regpat: " + regPat);
+            }
+
 
             pat = Pattern.compile(regPat, Pattern.CASE_INSENSITIVE);
             mat = pat.matcher(testTree.getFileNames());
-
+            
             String[] matches = mat.results().map(MatchResult::group).toArray(String[]::new);
-
+            Arrays.sort(matches);
             // String toFind = System.console().readLine();
             // in.close();
 
             String toFind;
-
+            int h = 0;
             for(int j = 0; j < matches.length; j++){
 
                 // toFind = matches[j].substring(0, matches[j].length() - 1);
@@ -204,7 +259,8 @@ public class FSC{
                         if(keys01.get(i).name.equals(toFind)){
                             ArrayList<String> paths01 = testTree.fcWithKey(toFind).getKeys().get(i).getPaths();
                             for(int k = 0; k < paths01.size(); k++){
-                                System.out.println(k + ". Path: " + paths01.get(k));
+                                System.out.println(h + ". Path: " + paths01.get(k));
+                                h++;
                             }
                             break;
                         }
@@ -220,7 +276,7 @@ public class FSC{
         // FSC test0 = new FSC(entries);
         // BTree bTree = new BTree(3);
         // test0.crawl(bTree);
-        // System.out.println("filenames:" + test0.fileNames);
+        // // System.out.println("filenames:" + test0.fileNames);
         // bTree.setFileNames(test0.fileNames.toString());
         // bTree.toObjSer();
         // AbstractBTree testTree = BTree.serObjToTree();
