@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 
 public class FSC{
     File[] root;
-    StringBuilder fileNames;
+    // StringBuilder fileNames;
     HashSet<String> allNames;
 
     static String[][] mtMatches;
@@ -23,7 +23,7 @@ public class FSC{
 
     public FSC(File[] root){
         this.root = root;
-        this.fileNames = new StringBuilder();
+        // this.fileNames = new StringBuilder();
         this.allNames = new HashSet<String>(500000);
     }
 
@@ -203,11 +203,13 @@ public class FSC{
     public static void main(String[] args) {
         //hihi
 
+        int threads = 8;
+
         AbstractBTree testTree = BTree.serObjToTree();
         Pattern pat;
         Matcher mat;
         
-        mtMatches = new String[4][];
+        mtMatches = new String[threads][];
 
         
         
@@ -247,8 +249,8 @@ public class FSC{
                 System.out.println("regpat: " + regPat);
             }
             
-            ExecutorService bees = Executors.newFixedThreadPool(4);
-            for(int i  = 0; i < 4; i++){
+            ExecutorService bees = Executors.newFixedThreadPool(threads);
+            for(int i  = 0; i < testTree.getFileNames().length; i++){
                 bees.execute(new mtRegWork(i, regPat, testTree.getFileNames()[i]));
             }
 
@@ -272,7 +274,7 @@ public class FSC{
 
             String toFind;
             int h = 0;
-            for(int idx = 0; idx < 4; idx++){
+            for(int idx = 0; idx < threads; idx++){
                 
                 if(mtMatches[idx] == null){
                     continue;
@@ -315,10 +317,10 @@ public class FSC{
         // test0.crawl(bTree);
 
         // String fileNameSuperString = test0.fileNames.toString();
-        // StringBuilder[] toAdd = new StringBuilder[4];
+        // StringBuilder[] toAdd = new StringBuilder[threads];
         // String tmp;
 
-        // for(int i = 0; i < 4; i++){
+        // for(int i = 0; i < threads; i++){
         //     toAdd[i] = new StringBuilder();
         // }
 
@@ -348,13 +350,16 @@ public class FSC{
         // Iterator<String> hashIter = test0.allNames.iterator();
         // while(hashIter.hasNext()){
         //     toAdd[idx].append(hashIter.next());
-        //     idx = (idx+1 == 4)?(0):(idx+1);
+        //     idx = (idx+1 >= threads)?(0):(idx+1);
         // }
-        // String[] fuckMe = new String[4];
-        // fuckMe[0] = toAdd[0].toString();
-        // fuckMe[1] = toAdd[1].toString();
-        // fuckMe[2] = toAdd[2].toString();
-        // fuckMe[3] = toAdd[3].toString();
+        // String[] fuckMe = new String[threads];
+        // for(int i = 0; i < threads; i++){
+        //     fuckMe[i] = toAdd[i].toString();
+        // }
+        // // fuckMe[0] = toAdd[0].toString();
+        // // fuckMe[1] = toAdd[1].toString();
+        // // fuckMe[2] = toAdd[2].toString();
+        // // fuckMe[3] = toAdd[3].toString();
 
         // // System.out.println("filenames:" + test0.fileNames);
         // bTree.setFileNames(fuckMe);
