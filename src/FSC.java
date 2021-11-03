@@ -1,5 +1,6 @@
 import java.io.File;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.ArrayList;
@@ -41,7 +42,7 @@ public class FSC{
                 if(curPos[i].isFile()){
                     String fileName = curPos[i].getName();
 
-                    this.nameSet.add(fileName);
+                    this.nameSet.add(fileName + ";");
 
                     // if(this.fileNames.indexOf(fileName) == -1){
                     //     this.fileNames.append(fileName + ";");
@@ -112,7 +113,7 @@ public class FSC{
                 String fileName = curPos[i].getName();
                 FileContainer add = new FileContainer(fileName, curPos[i].getPath());
                 
-                this.nameSet.add(fileName);
+                this.nameSet.add(fileName + ";");
                 
                 // if(this.fileNames.indexOf(fileName) == -1){
                 //     this.fileNames.append(fileName + ";");
@@ -276,7 +277,7 @@ public class FSC{
                 // Arrays.sort(matches);
                 // String toFind = System.console().readLine();
                 // in.close();
-
+                ArrayList<String> allPathsAL = new ArrayList<String>();
                 String toFind;
                 int h = 0;
                 for(int idx = 0; idx < mtMatches.length; idx++){
@@ -302,7 +303,8 @@ public class FSC{
                                     // ArrayList<String> paths01 = testTree.fcWithKey(toFind).getKeys().get(i).getPaths();
                                     ArrayList<String> paths01 = keys01.get(i).getPaths();
                                     for(int k = 0; k < paths01.size(); k++){
-                                        System.out.println(h + ". Path: " + paths01.get(k));
+                                        allPathsAL.add(paths01.get(k));
+                                        // System.out.println(h + ". Path: " + paths01.get(k));
                                         h++;
                                     }
                                     break;
@@ -310,15 +312,19 @@ public class FSC{
                             }
                         }
                     }
-
+                }
+                String[] pathArr = allPathsAL.toArray(new String[0]);
+                Arrays.parallelSort(pathArr);
+                for(int k = 0; k < pathArr.length; k++){
+                    System.out.println(k + ". Path: " + pathArr[k]);
                 }
             }
 
         }else{
 
             //File[] entries = File.listRoots()[0].listFiles()[13].listFiles();
-            File[] entries = File.listRoots()[0].listFiles();
-            // File[] entries = File.listRoots();
+            // File[] entries = File.listRoots()[0].listFiles();
+            File[] entries = File.listRoots();
             //  File[] entries = File.listRoots()[2].listFiles()[8].listFiles()[60].listFiles();
             FSC test0 = new FSC(entries);
             BTree bTree = new BTree(3);
