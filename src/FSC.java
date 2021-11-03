@@ -287,14 +287,17 @@ public class FSC{
                 if(mtMatches == null){
                     System.out.println("no matches!");
                 }
+
+
+                //todo change order of search (1.dim first, then 2. dim)
                 for(int idx = 0; idx < mtMatches.length; idx++){
                     if(mtMatches[idx] == null){
                         continue;
                     }
-                    for(int j = 0; j < mtMatches[idx].length; j++){
+                    for(int idy = 0; idy < mtMatches[idx].length; idy++){
     
                         // toFind = matches[j].substring(0, matches[j].length() - 1);
-                        toFind = mtMatches[idx][j];
+                        toFind = mtMatches[idx][idy];
                         // System.out.println(toFind);
                         boolean foundQ = testTree.hasKey(toFind);
                         // System.out.println("Search for '" + toFind + "' returned: " + foundQ);
@@ -305,10 +308,10 @@ public class FSC{
                             AbstractBTreeNode nodeWithKey = testTree.fcWithKey(toFind);
                             // ArrayList<FileContainer> keys01 = testTree.fcWithKey(toFind).getKeys();
                             ArrayList<FileContainer> keys01 = nodeWithKey.getKeys();
-                            for(int i = 0; i < keys01.size(); i++){
-                                if(keys01.get(i).name.equals(toFind)){
+                            for(int idz = 0; idz < keys01.size(); idz++){
+                                if(keys01.get(idz).name.equals(toFind)){
                                     // ArrayList<String> paths01 = testTree.fcWithKey(toFind).getKeys().get(i).getPaths();
-                                    ArrayList<String> paths01 = keys01.get(i).getPaths();
+                                    ArrayList<String> paths01 = keys01.get(idz).getPaths();
                                     for(int k = 0; k < paths01.size(); k++){
                                         allPathsAL.add(paths01.get(k));
                                         // System.out.println(h + ". Path: " + paths01.get(k));
@@ -320,6 +323,9 @@ public class FSC{
                         }
                     }
                 }
+
+
+
                 String[] pathArr = allPathsAL.toArray(new String[0]);
                 Arrays.parallelSort(pathArr);
                 for(int k = 0; k < pathArr.length; k++){
