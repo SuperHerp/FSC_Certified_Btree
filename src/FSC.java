@@ -202,6 +202,7 @@ public class FSC{
             mat = pat.matcher(this.toMatchOn);
             
             mtMatches[this.id] = mat.results().map(MatchResult::group).toArray(String[]::new);
+            Arrays.parallelSort(mtMatches[this.id]);
             System.out.println("thread '" + this.id + "' finished");
         
         }
@@ -243,14 +244,17 @@ public class FSC{
 
                 if(inFromCLI.contains("direct:")){
                     inFromCLI = inFromCLI.replace("direct:", "");
-
-                    regPat = inFromCLI;
+                    inFromCLI = inFromCLI.replace(".", "\\.");
+                    
+                    regPat = "([^;]*^(" + inFromCLI + "))|([^;]*(" + inFromCLI + ")";
+                    // regPat = inFromCLI;
                     System.out.println("regpat: " + regPat);
 
                 }else if(inFromCLI.contains("ext:")){
                     inFromCLI = inFromCLI.replace("ext:", "");
 
-                    regPat = "([^;]*\\w+." + inFromCLI + ")";
+                    regPat = "([^;]*(\\." + inFromCLI + "))";
+                    // regPat = "([^;]*\\w+." + inFromCLI + ")";
                     System.out.println("regpat: " + regPat);
                 }else{
                     regPat = "[^;]*(" + inFromCLI + ")[^;]+";
@@ -280,6 +284,9 @@ public class FSC{
                 ArrayList<String> allPathsAL = new ArrayList<String>();
                 String toFind;
                 int h = 0;
+                if(mtMatches == null){
+                    System.out.println("no matches!");
+                }
                 for(int idx = 0; idx < mtMatches.length; idx++){
                     if(mtMatches[idx] == null){
                         continue;
