@@ -237,22 +237,16 @@ public class FSC{
     public static void main(String[] args) {
         //hihi
 
-        int threads = 8;
-
-        // String[] testSort = {"iplink", "iplinkC", "aiplinkCA", "iplinkB"};
-        // Arrays.parallelSort(testSort, getStringCMP());
-
-        // for(int i = 0; i < testSort.length; i++){
-        //     System.out.println(testSort[i]);
-        // }
+  
 
         System.out.println("Create new tree (0) or search existing tree (1) ?");
 
         if(System.console().readLine().equals("1")){
 
-            mtMatches = new String[threads][];
-
             AbstractBTree testTree = BTree.serObjToTree();
+            int threads = testTree.getFileNames().length; 
+            mtMatches = new String[threads][];
+            
             boolean folderSearch;
             while(true){
                 System.out.println("---------------------------------------------------------------------------------------------");
@@ -260,7 +254,8 @@ public class FSC{
                 System.out.println("Search-atrributes:");
                 System.out.println("    0.: ''          -> search for strings containing input (e.g: input 'hello' => every file containing 'hello' in its name (daksjhhelloaskjdla.ext gets matched!))");
                 System.out.println("    1.: 'ext:'      -> search for extension (e.g: ext:exe => lists all files with '.exe' as extension)");
-                System.out.println("    2.: 'direct:'   -> search for this literaly (whole word match -> e.g: direct:ascii.inc => looks for ascii.inc)");
+                System.out.println("    2.: 'folder:'   -> search for folders only");
+                System.out.println("    3.: 'direct:'   -> search for this literaly (whole word match -> e.g: direct:ascii.inc => looks for ascii.inc)");
 
                 folderSearch = false;
                 // Scanner in = new Scanner(System.in);
@@ -298,7 +293,6 @@ public class FSC{
                     inFromCLI = inFromCLI.replace(".", "\\.");
 
                     regPat = "([^;]*^(" + inFromCLI + ")[^;]*)|([^;]*(" + inFromCLI + ")[^;]*)";
-
                     // regPat = "[^;]*(" + inFromCLI + ")[^;]+";
                     System.out.println("regpat: " + regPat);
                 }
@@ -312,7 +306,6 @@ public class FSC{
                 try {
                     bees.awaitTermination(10, TimeUnit.MINUTES);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
 
@@ -380,29 +373,28 @@ public class FSC{
                         }
                     }
                 }
-            
-
-                String[] pathArr = allPathsAL.toArray(new String[0]);
+                
+                // String[] pathArr = allPathsAL.toArray(new String[0]);
                 // Arrays.parallelSort(pathArr);
-                for(int k = 0; k < pathArr.length; k++){
-                    System.out.println(k + ". Path: " + pathArr[k]);
+                for(int k = 0; k < allPathsAL.size(); k++){
+                    System.out.println(k + ". Path: " + allPathsAL.get(k));
+                    // System.out.println(k + ". Path: " + pathArr[k]);
                 }
             }
 
         }else{
 
-            //File[] entries = File.listRoots()[0].listFiles()[13].listFiles();
-            File[] entries = File.listRoots()[0].listFiles();
-            // File[] entries = File.listRoots();
-            //  File[] entries = File.listRoots()[2].listFiles()[8].listFiles()[60].listFiles();
+            System.out.println("Enter number of threads for later search (this is final!)");
+            System.out.println("(This does not improve speed of filecrawler)");
+
+            int threads = Integer.parseInt(System.console().readLine());
+
+            // File[] entries = File.listRoots()[0].listFiles();
+            File[] entries = File.listRoots();
+
             FSC test0 = new FSC(entries);
             BTree bTree = new BTree(3);
             test0.crawl(bTree);
-
-
-
-            
-            // String fileNameSuperString = test0.fileNames.toString();
 
             StringBuilder[] toAdd = new StringBuilder[threads];
             String tmp;
@@ -429,34 +421,7 @@ public class FSC{
             bTree.setFileNames(finalStringArr);
             bTree.toObjSer();
             AbstractBTree testTree = BTree.serObjToTree();
-            //System.out.println(bTree.toJson());
-            boolean test00 = testTree.hasKey("A.txt");
-            boolean test1 = testTree.hasKey("B.txt");
-            boolean test2 = testTree.hasKey("C.txt");
-            boolean test3 = testTree.hasKey("D.txt");
-            boolean test4 = testTree.hasKey("E.txt");
-            boolean test5 = testTree.hasKey("Arch.exe");
-            boolean test6 = testTree.hasKey("World of Warcraft Launcher.exe");
-            boolean test7 = testTree.hasKey("Am Arsch!.mp3");
-            boolean test8 = testTree.hasKey("cemu_1.15.1.rar");
-            boolean test9 = testTree.hasKey("GOPR0603.JPG");
-            boolean test10 = testTree.hasKey("Loki_S01E01_Glorious Purpose.mp4");
-            //FileContainer test10 = testTree.FCwithKey("A.txt");
-            System.out.println("test00:" + test00);
-            System.out.println("test01:" + test1);
-            System.out.println("test02:" +test2);
-            System.out.println("test03:" +test3);
-            System.out.println("test04:" +test4);
-            System.out.println("test05:" +test5);
-            System.out.println("test06:" +test6);
-            System.out.println("test07:" +test7);
-            System.out.println("test08:" +test8);
-            System.out.println("test09:" +test9);
-            System.out.println("test10:" +test10);
-         
-            // testTree.remove(new FileContainer("A.txt", "C:\\Users\\simon\\Desktop\\FSC TestDir\\A.txt"));
-            // System.out.println("\n" + test);
-            // int debug = -1;
+            
         }
     }
 }
