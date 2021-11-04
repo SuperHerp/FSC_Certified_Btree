@@ -203,7 +203,7 @@ public class FSC{
             mat = pat.matcher(this.toMatchOn);
             
             mtMatches[this.id] = mat.results().map(MatchResult::group).toArray(String[]::new);
-            Arrays.parallelSort(mtMatches[this.id]);
+            Arrays.parallelSort(mtMatches[this.id], getStringCMP());
             // System.out.println("thread '" + this.id + "' finished");
         
         }
@@ -239,12 +239,12 @@ public class FSC{
 
         int threads = 8;
 
-        String[] testSort = {"iplink", "iplinkC", "aiplinkCA", "iplinkB"};
-        Arrays.parallelSort(testSort);
+        // String[] testSort = {"iplink", "iplinkC", "aiplinkCA", "iplinkB"};
+        // Arrays.parallelSort(testSort, getStringCMP());
 
-        for(int i = 0; i < testSort.length; i++){
-            System.out.println(testSort[i]);
-        }
+        // for(int i = 0; i < testSort.length; i++){
+        //     System.out.println(testSort[i]);
+        // }
 
         System.out.println("Create new tree (0) or search existing tree (1) ?");
 
@@ -343,7 +343,7 @@ public class FSC{
                         arrIdx++;
                     }
                 }
-                Arrays.parallelSort(sortedMatches);
+                Arrays.parallelSort(sortedMatches, getStringCMP());
                 
                 // for(int i = 0; i < totalLen; i++){
                 //     System.out.println(i + ". match is: '"+ sortedMatches[i] + "'");
