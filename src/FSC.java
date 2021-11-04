@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.Inflater;
 
 public class FSC{
     File[] root;
@@ -44,16 +45,9 @@ public class FSC{
 
                     this.nameSet.add(fileName + ";");
 
-                    // if(this.fileNames.indexOf(fileName) == -1){
-                    //     this.fileNames.append(fileName + ";");
-                    //     // System.out.println("filename added: " + this.fileNames);
-                    // }
                     FileContainer add = new FileContainer(fileName, curPos[i].getPath());
                     bTree.insert(add);
-                    //System.out.println("adding: " + fileName);
 
-                    //add FC to tree
-                    //continue;
                     if(i == curPos.length - 1 ){
                         lastVisit = curPos[i].getParentFile().getPath();
                         if(parents.size() == 0){
@@ -106,25 +100,15 @@ public class FSC{
                         }
                     }
                 }
-                //break;
             }
-        //for(int i = 0; i < curPos.length; i++){
             if(curPos[i].isFile()){
                 String fileName = curPos[i].getName();
                 FileContainer add = new FileContainer(fileName, curPos[i].getPath());
                 
                 this.nameSet.add(fileName + ";");
                 
-                // if(this.fileNames.indexOf(fileName) == -1){
-                //     this.fileNames.append(fileName + ";");
-                //     // System.out.println("filename added: " + this.fileNames);
-                // }
                 bTree.insert(add);
-                // String fileName = curPos[i].getName();
-                //System.out.println("adding: " + fileName);
 
-                //add FC to tree
-                //continue;
                 if(i == curPos.length - 1 ){
                     lastVisit = curPos[i].getParentFile().getPath();
                     curPos = parents.peek();
@@ -217,6 +201,13 @@ public class FSC{
 
         int threads = 8;
 
+        String[] testSort = {"iplink", "iplinkC", "aiplinkCA", "iplinkB"};
+        Arrays.parallelSort(testSort);
+
+        for(int i = 0; i < testSort.length; i++){
+            System.out.println(testSort[i]);
+        }
+
         System.out.println("Create new tree (0) or search existing tree (1) ?");
 
         if(System.console().readLine().equals("1")){
@@ -224,8 +215,6 @@ public class FSC{
             mtMatches = new String[threads][];
 
             AbstractBTree testTree = BTree.serObjToTree();
-            // Pattern pat;
-            // Matcher mat;
 
             while(true){
                 System.out.println("---------------------------------------------------------------------------------------------");
@@ -246,18 +235,24 @@ public class FSC{
                     inFromCLI = inFromCLI.replace("direct:", "");
                     inFromCLI = inFromCLI.replace(".", "\\.");
                     
-                    regPat = "([^;]*^(" + inFromCLI + "))|([^;]*(" + inFromCLI + ")";
+                    regPat = "([^;]*^(" + inFromCLI + "))|([^;]*(" + inFromCLI + "))";
                     // regPat = inFromCLI;
                     System.out.println("regpat: " + regPat);
 
                 }else if(inFromCLI.contains("ext:")){
                     inFromCLI = inFromCLI.replace("ext:", "");
 
-                    regPat = "([^;]*(\\." + inFromCLI + "))";
+                    regPat = "([^;]*^(\\." + inFromCLI + "))|([^;]*(\\." + inFromCLI + "))";
                     // regPat = "([^;]*\\w+." + inFromCLI + ")";
                     System.out.println("regpat: " + regPat);
                 }else{
-                    regPat = "[^;]*(" + inFromCLI + ")[^;]+";
+                    //no options for search
+
+                    inFromCLI = inFromCLI.replace(".", "\\.");
+
+                    regPat = "([^;]*^(" + inFromCLI + ")[^;]*)|([^;]*(" + inFromCLI + ")[^;]*)";
+
+                    // regPat = "[^;]*(" + inFromCLI + ")[^;]+";
                     System.out.println("regpat: " + regPat);
                 }
 
@@ -274,60 +269,108 @@ public class FSC{
                     e.printStackTrace();
                 }
 
-                // pat = Pattern.compile(regPat, Pattern.CASE_INSENSITIVE);
-                // mat = pat.matcher(testTree.getFileNames());
-                
-                // String[] matches = mat.results().map(MatchResult::group).toArray(String[]::new);
-                // Arrays.sort(matches);
-                // String toFind = System.console().readLine();
-                // in.close();
                 ArrayList<String> allPathsAL = new ArrayList<String>();
-                String toFind;
                 int h = 0;
                 if(mtMatches == null){
                     System.out.println("no matches!");
                 }
-
-
-                //todo change order of search (1.dim first, then 2. dim)
+                
+                //-----------------------------------------------------------------------------------------
+                
+                int totalLen = 0;
+                for(int idx = 0; idx < mtMatches.length; idx++){
+                    if(mtMatches[idx] == null){
+                        continue;
+                    }
+                    totalLen = totalLen + mtMatches[idx].length;
+                }
+                
+                String[] sortedMatches = new String[totalLen];
+                
+                int arrIdx = 0;
                 for(int idx = 0; idx < mtMatches.length; idx++){
                     if(mtMatches[idx] == null){
                         continue;
                     }
                     for(int idy = 0; idy < mtMatches[idx].length; idy++){
-    
-                        // toFind = matches[j].substring(0, matches[j].length() - 1);
-                        toFind = mtMatches[idx][idy];
-                        // System.out.println(toFind);
-                        boolean foundQ = testTree.hasKey(toFind);
-                        // System.out.println("Search for '" + toFind + "' returned: " + foundQ);
+                        sortedMatches[arrIdx] = mtMatches[idx][idy];
+                        arrIdx++;
+                    }
+                }
+                Arrays.parallelSort(sortedMatches);
+
+                for(int i = 0; i < totalLen; i++){
+                    System.out.println(i + ". match is: '"+ sortedMatches[i] + "'");
+                }
+                
+                String toFind;
+                for(int idx = 0; idx < sortedMatches.length; idx++){
+                    
+                    toFind = sortedMatches[idx];
+                    // boolean foundQ = testTree.hasKey(toFind);
             
-                        // testTree.remove(new FileContainer("A.txt", "E:\\Desktop\\FSC TestDir\\A\\A.txt"));
-            
-                        if(foundQ){
-                            AbstractBTreeNode nodeWithKey = testTree.fcWithKey(toFind);
-                            // ArrayList<FileContainer> keys01 = testTree.fcWithKey(toFind).getKeys();
-                            ArrayList<FileContainer> keys01 = nodeWithKey.getKeys();
-                            for(int idz = 0; idz < keys01.size(); idz++){
-                                if(keys01.get(idz).name.equals(toFind)){
-                                    // ArrayList<String> paths01 = testTree.fcWithKey(toFind).getKeys().get(i).getPaths();
-                                    ArrayList<String> paths01 = keys01.get(idz).getPaths();
-                                    for(int k = 0; k < paths01.size(); k++){
-                                        allPathsAL.add(paths01.get(k));
-                                        // System.out.println(h + ". Path: " + paths01.get(k));
-                                        h++;
-                                    }
-                                    break;
+                    // if(foundQ){
+                    if(testTree.hasKey(toFind)){
+                        AbstractBTreeNode nodeWithKey = testTree.fcWithKey(toFind);
+                        // ArrayList<FileContainer> keys01 = testTree.fcWithKey(toFind).getKeys();
+                        ArrayList<FileContainer> keys01 = nodeWithKey.getKeys();
+                        for(int idz = 0; idz < keys01.size(); idz++){
+                            if(keys01.get(idz).name.equals(toFind)){
+                                // ArrayList<String> paths01 = testTree.fcWithKey(toFind).getKeys().get(i).getPaths();
+                                ArrayList<String> paths01 = keys01.get(idz).getPaths();
+                                for(int k = 0; k < paths01.size(); k++){
+                                    allPathsAL.add(paths01.get(k));
+                                    // System.out.println(h + ". Path: " + paths01.get(k));
+                                    h++;
                                 }
+                                break;
                             }
                         }
                     }
                 }
-
-
+                
+                
+                //-----------------------------------------------------------------------------------------
+                
+                //todo change order of search (1.dim first, then 2. dim)
+                // for(int idx = 0; idx < mtMatches.length; idx++){
+                //     if(mtMatches[idx] == null){
+                //         continue;
+                //     }
+                //     for(int idy = 0; idy < mtMatches[idx].length; idy++){
+    
+                //         // toFind = matches[j].substring(0, matches[j].length() - 1);
+                //         toFind = mtMatches[idx][idy];
+                //         // System.out.println(toFind);
+                //         boolean foundQ = testTree.hasKey(toFind);
+                //         // System.out.println("Search for '" + toFind + "' returned: " + foundQ);
+            
+                //         // testTree.remove(new FileContainer("A.txt", "E:\\Desktop\\FSC TestDir\\A\\A.txt"));
+            
+                //         if(foundQ){
+                //             AbstractBTreeNode nodeWithKey = testTree.fcWithKey(toFind);
+                //             // ArrayList<FileContainer> keys01 = testTree.fcWithKey(toFind).getKeys();
+                //             ArrayList<FileContainer> keys01 = nodeWithKey.getKeys();
+                //             for(int idz = 0; idz < keys01.size(); idz++){
+                //                 if(keys01.get(idz).name.equals(toFind)){
+                //                     // ArrayList<String> paths01 = testTree.fcWithKey(toFind).getKeys().get(i).getPaths();
+                //                     ArrayList<String> paths01 = keys01.get(idz).getPaths();
+                //                     for(int k = 0; k < paths01.size(); k++){
+                //                         allPathsAL.add(paths01.get(k));
+                //                         // System.out.println(h + ". Path: " + paths01.get(k));
+                //                         h++;
+                //                     }
+                //                     break;
+                //                 }
+                //             }
+                //         }
+                //     }
+                // }
+                
+                //-----------------------------------------------------------------------------------------
 
                 String[] pathArr = allPathsAL.toArray(new String[0]);
-                Arrays.parallelSort(pathArr);
+                // Arrays.parallelSort(pathArr);
                 for(int k = 0; k < pathArr.length; k++){
                     System.out.println(k + ". Path: " + pathArr[k]);
                 }
@@ -336,8 +379,8 @@ public class FSC{
         }else{
 
             //File[] entries = File.listRoots()[0].listFiles()[13].listFiles();
-            // File[] entries = File.listRoots()[0].listFiles();
-            File[] entries = File.listRoots();
+            File[] entries = File.listRoots()[0].listFiles();
+            // File[] entries = File.listRoots();
             //  File[] entries = File.listRoots()[2].listFiles()[8].listFiles()[60].listFiles();
             FSC test0 = new FSC(entries);
             BTree bTree = new BTree(3);
@@ -363,33 +406,11 @@ public class FSC{
                 idx = (idx+1 >= threads)?(0):(idx+1);
             }
 
-            // int idx = 0;
-            // int idy = 0;
-            // int idz = 0;
-            // while(idx < fileNameSuperString.length()){
-            //     idx++;
-            //     while(fileNameSuperString.charAt(idx) != ';'){
-                    
-            //         idx++;
-            //     }
-            //     fileNameSuperString.substring(idy, idx);
-            //     toAdd[idz].append(fileNameSuperString.substring(idy, idx));
-            //     idz = (idz+1 == 4)?(0):(idz+1);
-            //     idy = idx+1;
-
-            // }
-
             String[] finalStringArr = new String[threads];
 
             for(int i = 0; i < finalStringArr.length; i++){
                 finalStringArr[i] = toAdd[i].toString();
             }
-
-            // finalStringArr[0] = toAdd[0].toString();
-            // finalStringArr[1] = toAdd[1].toString();
-            // finalStringArr[2] = toAdd[2].toString();
-            // finalStringArr[3] = toAdd[3].toString();
-
 
             // System.out.println("filenames:" + test0.fileNames);
             bTree.setFileNames(finalStringArr);
