@@ -80,7 +80,7 @@ public class BTreeNode extends AbstractBTreeNode{
 
     public int compareAToB(AbstractBTreeNode a, AbstractBTreeNode b){
         FileContainer aMax, aMin, bMax, bMin;
-        FileContainer cmprtr = new FileContainer("Comparator", "");
+        FileContainer cmprtr = new FileContainer("Comparator", "", true);
         int cmp1, cmp2;
 
         aMax = a.getKeys().get(a.getKeys().size() - 1);
@@ -164,7 +164,7 @@ public class BTreeNode extends AbstractBTreeNode{
     @Override
     public ArrayList<FileContainer> quickSortAR(ArrayList<FileContainer> aL){
         boolean noChanges;
-        FileContainer cmprtr = new FileContainer("Comparator", "");
+        FileContainer cmprtr = new FileContainer("Comparator", "", true);
         FileContainer swapA, swapB;
         int cmp, indA, indB;
 
@@ -233,7 +233,7 @@ public class BTreeNode extends AbstractBTreeNode{
 
         //AbstractBTreeNode curNode = new BTreeNode(this.getDegree());
         AbstractBTreeNode curNode = this;
-        FileContainer cmprtr = new FileContainer("Comparator", "");
+        FileContainer cmprtr = new FileContainer("Comparator", "", true);
         Stack<AbstractBTreeNode> parents = new Stack<AbstractBTreeNode>();
         ArrayList<FileContainer> keys;
         ArrayList<AbstractBTreeNode> children;
@@ -249,7 +249,11 @@ public class BTreeNode extends AbstractBTreeNode{
                 int cmp = cmprtr.compare(curNode.getKeys().get(i), key);
                 //int cmp = curNode.getKeys().get(i).name.compareTo(key.name);
                 if(cmp == 0){
-                    curNode.getKeys().get(i).addPath(key.getFirstPath());
+                    if(key.getFileStatus()){
+                        curNode.getKeys().get(i).addFilePath(key.getFirstFilePath());
+                    }else{
+                        curNode.getKeys().get(i).addFolderPath(key.getFirstFolderPath());
+                    }
                     return null;
                     //return true;
                 }else if(cmp < 0){
@@ -398,9 +402,9 @@ public class BTreeNode extends AbstractBTreeNode{
                 parents.push(curNode);
                 for(int i = 0; i < curNode.getKeys().size(); i++){
                     if(i < curNode.getKeys().size()-1){ //last key?  no => append  i-key + ","
-                        json.append("<" + curNode.getKeys().get(i).getName() + ";" + curNode.getKeys().get(i).path + ">" + ",");
+                        json.append("<" + curNode.getKeys().get(i).getName() + ";" + curNode.getKeys().get(i).filePath + ">" + ",");
                     }else { //last key? yes => append i-key + "]"
-                        json.append("<" + curNode.getKeys().get(i).getName() + ";" + curNode.getKeys().get(i).path + ">" + "]");
+                        json.append("<" + curNode.getKeys().get(i).getName() + ";" + curNode.getKeys().get(i).filePath + ">" + "]");
                     }
                 }
             }else{ //curnode is checked? => skip adding values
@@ -507,13 +511,13 @@ public class BTreeNode extends AbstractBTreeNode{
         if(fc2del == null){
             return;
         }else{
-            if(fc2del.path.size() <= 1){
+            if(fc2del.filePath.size() <= 1){
                 //Node/FC has to be deleted
             }else{
                 //Only path has to be removed
-                int indx2rm = fc2del.path.indexOf(key.getFirstPath());
+                int indx2rm = fc2del.filePath.indexOf(key.getFirstFilePath());
                 if(indx2rm != -1){
-                    fc2del.path.remove(fc2del.path.indexOf(key.getFirstPath()));
+                    fc2del.filePath.remove(fc2del.filePath.indexOf(key.getFirstFilePath()));
                 }
                 return;
             }

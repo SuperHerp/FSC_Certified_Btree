@@ -5,28 +5,52 @@ import java.util.Comparator;
 public class FileContainer implements Comparator<FileContainer>, Serializable {
 
     public String name;
-    public ArrayList<String> path;
+    public ArrayList<String> filePath;
+    public ArrayList<String> folderPath;
+    public boolean isFile;
 
-    public FileContainer(String name, String path){
+    public FileContainer(String name, String path, boolean isFile){
         this.name = name;
-        this.path = new ArrayList<String>();
-        this.path.add(path);
+        this.filePath = new ArrayList<String>();
+        this.folderPath = new ArrayList<String>();
+        if(isFile == true){
+            this.filePath.add(path);
+        }else{
+            this.folderPath.add(path);
+        }
+        this.isFile = isFile;
     }
 
-    public ArrayList<String> getPaths(){
-        return this.path;
+    public ArrayList<String> getFilePaths(){
+        return this.filePath;
+    }
+    
+    public ArrayList<String> getFolderPaths(){
+        return this.folderPath;
     }
 
-    public String getFirstPath() {
-        return path.get(0);
+    public String getFirstFilePath() {
+        return this.filePath.get(0);
     }
 
-    public void addPath(String path){
-        this.path.add(path);
+    public String getFirstFolderPath() {
+        return this.folderPath.get(0);
+    }
+
+    public void addFilePath(String path){
+        this.filePath.add(path);
+    }
+    
+    public void addFolderPath(String path){
+        this.folderPath.add(path);
     }
 
     public String getName() {
         return this.name;
+    }
+
+    public boolean getFileStatus(){
+        return this.isFile;
     }
 
 
