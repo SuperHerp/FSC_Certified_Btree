@@ -202,11 +202,13 @@ public class FSC{
         public void run() {
             int[] work;
             StringBuilder toMatchOnBuild = new StringBuilder();
+            int countWork = 0;
             while(true){
                 work = workLoad.getWork();
                 if(work[4] == -1){
                     break;
                 }
+                countWork++;
                 for(int i = work[0]; i < work[2]; i++){
                     toMatchOnBuild.append(allNames[i]);
                 }
@@ -221,7 +223,7 @@ public class FSC{
             
             mtMatches[this.id] = mat.results().map(MatchResult::group).toArray(String[]::new);
             Arrays.parallelSort(mtMatches[this.id], getStringCMP());
-            // System.out.println("thread '" + this.id + "' finished");
+            System.out.println("thread '" + this.id + "' finished after working out '" + countWork + "' packets");
         }
     }
 
