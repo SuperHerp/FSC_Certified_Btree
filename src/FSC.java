@@ -279,7 +279,8 @@ public class FSC{
                 System.out.println("Search-atrributes:");
                 System.out.println("    0.: ''          -> search for strings containing input (e.g: input 'hello' => every file containing 'hello' in its name (daksjhhelloaskjdla.ext gets matched!))");
                 System.out.println("    1.: 'ext:'      -> search for extension (e.g: ext:exe => lists all files with '.exe' as extension)");
-                System.out.println("    2.: 'direct:'   -> search for this literaly (whole word match -> e.g: direct:ascii.inc => looks for ascii.inc)");
+                System.out.println("    2.: 'folder:'   -> search for folders only");
+                System.out.println("    3.: 'direct:'   -> search for this literaly (whole word match -> e.g: direct:ascii.inc => looks for ascii.inc)");
 
                 folderSearch = false;
                 // Scanner in = new Scanner(System.in);
@@ -409,8 +410,8 @@ public class FSC{
         }else{
 
             //File[] entries = File.listRoots()[0].listFiles()[13].listFiles();
-            File[] entries = File.listRoots()[0].listFiles();
-            // File[] entries = File.listRoots();
+            // File[] entries = File.listRoots()[0].listFiles();
+            File[] entries = File.listRoots();
             //  File[] entries = File.listRoots()[2].listFiles()[8].listFiles()[60].listFiles();
             FSC fileCrawler = new FSC(entries);
             BTree bTree = new BTree(3);
