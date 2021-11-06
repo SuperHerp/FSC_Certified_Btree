@@ -44,6 +44,44 @@ public class BTreeNode extends AbstractBTreeNode{
         }
     }
 
+    public FileContainer fc01WithKey(String key) {
+        AbstractBTreeNode curNode = this;
+        boolean foundF = false;
+        while(true) {
+            ArrayList<FileContainer> keys = curNode.getKeys();
+            int index = -1;
+            for(int i = 0; i < keys.size(); i++){
+                int cmp = key.compareTo(keys.get(i).getName());
+                //int cmp = keys.get(i).name.compareTo(key);
+                if(cmp == 0){
+                    return curNode.getKeys().get(i);
+                    // foundF = true;
+                    // return curNode;
+                }else if(cmp > 0){
+                    continue;
+                }else if(cmp < 0){
+                    index = i;
+                    break;
+                }
+            }
+            
+            if(index == -1){
+                if(curNode.getChildren().size() != 0){
+                    index = curNode.getKeys().size();
+                    curNode = curNode.getChildren().get(index);
+                    continue;
+                }
+                return null;
+            }
+            if(index < curNode.getChildren().size()) {
+                curNode = curNode.getChildren().get(index);
+            }else {
+                return null;
+            }
+        }
+
+    }
+
     @Override
     public boolean hasKey(String key) {
         AbstractBTreeNode curNode = this;

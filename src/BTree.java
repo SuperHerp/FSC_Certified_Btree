@@ -42,6 +42,9 @@ public class BTree extends AbstractBTree {
         return this.getRoot().fcWithKey(key);
     }
 
+    public FileContainer fc01WithKey(String key) {
+        return this.getRoot().fc01WithKey(key);
+    }
 
     public static AbstractBTree serObjToTree() {
         //AbstractBTreeNode curNode = this.getRoot();

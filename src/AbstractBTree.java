@@ -1,3 +1,4 @@
+
 import java.io.Serializable;
 
 /**
@@ -118,6 +119,8 @@ public abstract class AbstractBTree implements Serializable {
 	public abstract void toObjSer();
 
 	public abstract AbstractBTreeNode fcWithKey(String key);
+
+	public abstract FileContainer fc01WithKey(String key);
 
 	//public abstract void serObjToTree();
 }

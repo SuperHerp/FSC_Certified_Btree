@@ -28,7 +28,7 @@ public class cSet extends Object {
         this.x = x;
         this.y = 1;
         this.threads = threads;
-        this.sections= threads*2;
+        this.sections= threads*4;
 
         /*Calculation max. section length*/
         if (sections > this.x){                   // is only bigger x

@@ -12,12 +12,16 @@ public abstract class AbstractBTreeNode implements Serializable {
 	 * BTree containing this node
 	 */
 	private AbstractBTree bTree;
+
+
 	/**
 	 * The degree of this BTreeNode. It must be the same for all nodes of the tree to which this node belongs to.
 	 *
 	 * @see AbstractBTree
 	 */
 	private final int degree;
+	
+	
 	/**
 	 * The list of keys stored in this node.
 	 *
@@ -25,6 +29,7 @@ public abstract class AbstractBTreeNode implements Serializable {
 	 */
 	private final ArrayList<FileContainer> keys = new ArrayList<>();
 
+	
 	/**
 	 * A string containing all the filenames
 	 *
@@ -32,6 +37,7 @@ public abstract class AbstractBTreeNode implements Serializable {
 	 */
 	private String[] fileNames;
 
+	
 	/**
 	 * The list of children (subtrees) of this node.
 	 *
@@ -224,6 +230,7 @@ public abstract class AbstractBTreeNode implements Serializable {
 	public abstract void remove(FileContainer key);
 
 	public abstract AbstractBTreeNode fcWithKey(String key);
+	public abstract FileContainer fc01WithKey(String key);
 
 	//public abstract void serObjToTree();
 }
