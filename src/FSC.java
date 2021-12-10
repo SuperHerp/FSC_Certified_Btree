@@ -70,7 +70,7 @@ public class FSC{
                     if(!bTree.hasKey(folderName)){
                         
                         this.nameSet.add(folderName + ";");
-    
+                        System.out.println(curPos[i].getPath());
                         FileContainer add = new FileContainer(folderName, curPos[i].getPath(), false);
                         bTree.insert(add);
 
@@ -141,6 +141,7 @@ public class FSC{
 
                     
                     String folderName = curPos[i].getName();
+                    System.out.println(curPos[i].getPath());
                     if(!bTree.hasKey(folderName)){
                         
                         this.nameSet.add(folderName + ";");
