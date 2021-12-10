@@ -428,7 +428,7 @@ public class cSet extends Object {
     }
 
     /** [getWork()]
-     * kls::comment:: the method has no args. (copy/paste "flüchtigkeitsfehler")
+     * kls::comment:: the method has no args. (copy/paste "fluechtigkeitsfehler")
      * returns array(int []) containting x-start, x-end, y-start and y-end of block calculated from @param blkNr
      *
      * array[5]
