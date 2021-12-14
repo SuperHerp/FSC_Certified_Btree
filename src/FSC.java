@@ -67,13 +67,19 @@ public class FSC{
                 }else{//is Folder
 
                     String folderName = curPos[i].getName();
-                    if(!bTree.hasKey(folderName)){
-                        
-                        this.nameSet.add(folderName + ";");
-                        System.out.println(curPos[i].getPath());
-                        FileContainer add = new FileContainer(folderName, curPos[i].getPath(), false);
-                        bTree.insert(add);
+                    boolean skip = false;
+                    if (folderName == proc){
+                        skip = true;
+                    }
+                    if(skip == false){
+                        if(!bTree.hasKey(folderName)){
+                            
+                            this.nameSet.add(folderName + ";");
+                            System.out.println(curPos[i].getPath());
+                            FileContainer add = new FileContainer(folderName, curPos[i].getPath(), false);
+                            bTree.insert(add);
 
+                        }
                     }
 
                     File[] debug = curPos[i].listFiles();
@@ -141,16 +147,21 @@ public class FSC{
 
                     
                     String folderName = curPos[i].getName();
-                    System.out.println(curPos[i].getPath());
-                    if(!bTree.hasKey(folderName)){
-                        
-                        this.nameSet.add(folderName + ";");
-    
-                        FileContainer add = new FileContainer(folderName, curPos[i].getPath(), false);
-                        bTree.insert(add);
-
+                    boolean skip = false;
+                    if (folderName == proc){
+                        skip = true;
                     }
+                    if(skip == false){
+                        System.out.println(curPos[i].getPath());
+                        if(!bTree.hasKey(folderName)){
+                            
+                            this.nameSet.add(folderName + ";");
+        
+                            FileContainer add = new FileContainer(folderName, curPos[i].getPath(), false);
+                            bTree.insert(add);
 
+                        }
+                    }
                     File[] debug = curPos[i].listFiles();
                     if(curPos[i].listFiles() == null){//folder empty
                         if(i == curPos.length-1){
